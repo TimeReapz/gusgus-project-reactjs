@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
+axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
 export default class Create extends Component {
   constructor(props) {
     super(props);
