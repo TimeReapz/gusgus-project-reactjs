@@ -156,7 +156,7 @@ class UploadPreview extends Component {
     var formData = new FormData();
     formData.append("image", event.target.files[0]);
     axios
-      .post(`/api/upload`, formData, {
+      .post(process.env.REACT_APP_HOST_API + `/api/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
