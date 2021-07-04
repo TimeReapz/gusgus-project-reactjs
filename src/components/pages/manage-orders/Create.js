@@ -48,7 +48,7 @@ export default class Create extends Component {
   init() {
     const id = this.state.id;
     if (id) {
-      axios.get(`/api/order/${id}`).then((response) => {
+      axios.get(process.env.HOST_API + `/api/order/${id}`).then((response) => {
         console.log(response)
         this.setState({
           userId: response.data.userId,
@@ -61,7 +61,7 @@ export default class Create extends Component {
     }
 
     // get user
-    axios.get(`/api/user?q=`).then((response) => {
+    axios.get(process.env.HOST_API + `/api/user?q=`).then((response) => {
       var tempArr = [];
       response.data.forEach((item) => {
         var obj = {
@@ -77,7 +77,7 @@ export default class Create extends Component {
     });
 
     // get product
-    axios.get(`/api/product?q=`).then((response) => {
+    axios.get(process.env.HOST_API + `/api/product?q=`).then((response) => {
       var tempArrGroup = [];
       var tempArr = [];
       response.data

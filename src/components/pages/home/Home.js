@@ -22,7 +22,7 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    axios.get(`/api/order?name=`).then((response) => {
+    axios.get(process.env.HOST_API + `/api/order?name=`).then((response) => {
       this.setState({
         dataTableMain: response.data,
         dataTable: response.data.filter((f) => f.schedule === "ทุกพระ 8,15"),

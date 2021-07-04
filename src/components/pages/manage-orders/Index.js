@@ -18,7 +18,7 @@ export default class Index extends Component {
 
   getOrders = () => {
     var q = this.queryName.value;
-    axios.get(`/api/order?name=${q}`).then((response) => {
+    axios.get(process.env.HOST_API + `/api/order?name=${q}`).then((response) => {
       if (response.data != null) {
         console.log(response.data)
 
@@ -38,7 +38,7 @@ export default class Index extends Component {
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        axios.delete(`/api/order/${id}`).then((response) => {
+        axios.delete(process.env.HOST_API + `/api/order/${id}`).then((response) => {
           this.getOrders();
         });
       }
