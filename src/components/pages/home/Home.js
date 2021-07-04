@@ -22,7 +22,11 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    axios.get(process.env.REACT_APP_HOST_API + `/api/order?name=`).then((response) => {
+    axios.get(process.env.REACT_APP_HOST_API + `/api/order?name=`, {
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+     }).then((response) => {
       this.setState({
         dataTableMain: response.data,
         dataTable: response.data.filter((f) => f.schedule === "ทุกพระ 8,15"),

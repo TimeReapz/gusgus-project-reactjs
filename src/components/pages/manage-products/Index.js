@@ -18,7 +18,11 @@ export default class Index extends Component {
 
   getProducts = () => {
     var q = this.queryName.value;
-    axios.get(`/api/product?name=${q}`).then((response) => {
+    axios.get(`/api/product?name=${q}`, {
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+     }).then((response) => {
       if (response.data != null) {
         this.setState({
           dataTable: response.data,
