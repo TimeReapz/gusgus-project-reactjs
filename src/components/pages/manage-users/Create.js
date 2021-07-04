@@ -13,7 +13,7 @@ export default class Create extends Component {
   componentDidMount() {
     const id = this.state.id;
     if (id) {
-      axios.get(`/api/user/${id}`).then((response) => {
+      axios.get(process.env.REACT_APP_HOST_API + `/api/user/${id}`).then((response) => {
         this.name.value = response.data.name;
       });
     }
@@ -25,7 +25,7 @@ export default class Create extends Component {
     if (id !== 0) {
       // update
       axios
-        .patch(`/api/user/${id}`, {
+        .patch(process.env.REACT_APP_HOST_API + `/api/user/${id}`, {
           name: this.name.value,
         })
         .then((response) => {
@@ -34,7 +34,7 @@ export default class Create extends Component {
     } else {
       // insert
       axios
-        .post(`/api/user`, {
+        .post(process.env.REACT_APP_HOST_API + `/api/user`, {
           name: this.name.value,
         })
         .then((response) => {

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { SwalConfirm } from "../../../lib/script";
 import { Link } from "react-router-dom";
 
+axios.defaults.headers['Access-Control-Allow-Origin'] = "*";
 export default class Index extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +19,7 @@ export default class Index extends Component {
 
   getProducts = () => {
     var q = this.queryName.value;
-    axios.get(`/api/product?name=${q}`, {
+    axios.get(process.env.REACT_APP_HOST_API + `/api/product?name=${q}`, {
       headers: {
         "Access-Control-Allow-Origin": "*"
       }
@@ -40,7 +41,7 @@ export default class Index extends Component {
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        axios.delete(`/api/product/${id}`).then((response) => {
+        axios.delete(process.env.REACT_APP_HOST_API + `/api/product/${id}`).then((response) => {
           this.getProducts();
         });
       }

@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
+axios.defaults.headers['Access-Control-Allow-Origin'] = "*";
 export default class Create extends Component {
   constructor(props) {
     super(props);
@@ -14,7 +15,7 @@ export default class Create extends Component {
   componentDidMount() {
     const id = this.state.id;
     if (id) {
-      axios.get(`/api/product/${id}`).then((response) => {
+      axios.get(process.env.REACT_APP_HOST_API + `/api/product/${id}`).then((response) => {
         this.name.value = response.data.name;
         this.subType.value = response.data.subType;
         this.price.value = response.data.price;
@@ -43,12 +44,12 @@ export default class Create extends Component {
     
     if (id !== 0) {
       // update
-      axios.patch(`/api/product/${id}`, model).then((response) => {
+      axios.patch(process.env.REACT_APP_HOST_API + `/api/product/${id}`, model).then((response) => {
         this.props.history.push("/manageproduct");
       });
     } else {
       // insert
-      axios.post(`/api/product`, model).then((response) => {
+      axios.post(process.env.REACT_APP_HOST_API + `/api/product`, model).then((response) => {
         this.props.history.push("/manageproduct");
       });
     }

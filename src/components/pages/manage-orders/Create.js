@@ -17,6 +17,7 @@ const delivery = [
   { value: "มาเอาที่ตลาด", label: "มาเอาที่ตลาด" },
 ];
 
+axios.defaults.headers['Access-Control-Allow-Origin'] = "*";
 export default class Create extends Component {
   constructor(props) {
     super(props);
@@ -48,7 +49,7 @@ export default class Create extends Component {
   init() {
     const id = this.state.id;
     if (id) {
-      axios.get(process.env.HOST_API + `/api/order/${id}`).then((response) => {
+      axios.get(process.env.REACT_APP_HOST_API + `/api/order/${id}`).then((response) => {
         console.log(response)
         this.setState({
           userId: response.data.userId,
@@ -61,7 +62,7 @@ export default class Create extends Component {
     }
 
     // get user
-    axios.get(process.env.HOST_API + `/api/user?q=`).then((response) => {
+    axios.get(process.env.REACT_APP_HOST_API + `/api/user?q=`).then((response) => {
       var tempArr = [];
       response.data.forEach((item) => {
         var obj = {
@@ -77,7 +78,7 @@ export default class Create extends Component {
     });
 
     // get product
-    axios.get(process.env.HOST_API + `/api/product?q=`).then((response) => {
+    axios.get(process.env.REACT_APP_HOST_API + `/api/product?q=`).then((response) => {
       var tempArrGroup = [];
       var tempArr = [];
       response.data
@@ -185,12 +186,12 @@ export default class Create extends Component {
 
     if (id !== 0) {
       // update
-      axios.patch(`/api/order/${id}`, model).then((response) => {
+      axios.patch(process.env.REACT_APP_HOST_API + `/api/order/${id}`, model).then((response) => {
         this.props.history.push("/manageorder");
       });
     } else {
       // insert
-      axios.post(`/api/order`, model).then((response) => {
+      axios.post(process.env.REACT_APP_HOST_API + `/api/order`, model).then((response) => {
         this.props.history.push("/manageorder");
       });
     }

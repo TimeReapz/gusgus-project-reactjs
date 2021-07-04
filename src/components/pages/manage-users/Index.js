@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { SwalConfirm } from "../../../lib/script";
 import { Link } from "react-router-dom";
 
+axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
 export default class Index extends Component {
   constructor(props) {
     super(props);
@@ -18,17 +19,19 @@ export default class Index extends Component {
 
   getUsers = () => {
     var q = this.queryName.value;
-    axios.get(`/api/user?name=${q}`).then((response) => {
-      if (response.data != null) {
-        this.setState({
-          dataTable: response.data,
-        });
-      } else {
-        this.setState({
-          dataTable: [],
-        });
-      }
-    });
+    axios
+      .get(process.env.REACT_APP_HOST_API + `/api/user?name=${q}`)
+      .then((response) => {
+        if (response.data != null) {
+          this.setState({
+            dataTable: response.data,
+          });
+        } else {
+          this.setState({
+            dataTable: [],
+          });
+        }
+      });
   };
 
   delUser = (id) => {
@@ -36,9 +39,11 @@ export default class Index extends Component {
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        axios.delete(`/api/user/${id}`).then((response) => {
-          this.getUsers();
-        });
+        axios
+          .delete(process.env.REACT_APP_HOST_API + `/api/user/${id}`)
+          .then((response) => {
+            this.getUsers();
+          });
       }
     });
   };
@@ -113,7 +118,7 @@ export default class Index extends Component {
                             <td>
                               <Link
                                 to={{
-                                  pathname: `manageuser-create/${item.id}`
+                                  pathname: `manageuser-create/${item.id}`,
                                 }}
                                 className="btn btn-primary mr-2"
                               >
