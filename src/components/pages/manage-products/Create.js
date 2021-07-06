@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-axios.defaults.headers['Access-Control-Allow-Origin'] = "*";
+axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
 export default class Create extends Component {
   constructor(props) {
     super(props);
@@ -15,15 +15,17 @@ export default class Create extends Component {
   componentDidMount() {
     const id = this.state.id;
     if (id) {
-      axios.get(process.env.REACT_APP_HOST_API + `/api/product/${id}`).then((response) => {
-        this.name.value = response.data.name;
-        this.subType.value = response.data.subType;
-        this.price.value = response.data.price;
+      axios
+        .get(process.env.REACT_APP_HOST_API + `/api/product/${id}`)
+        .then((response) => {
+          this.name.value = response.data.name;
+          this.subType.value = response.data.subType;
+          this.price.value = response.data.price;
 
-        this.setState({
-          file: response.data.thumbnail,
+          this.setState({
+            file: response.data.thumbnail,
+          });
         });
-      });
     }
   }
 
@@ -41,17 +43,21 @@ export default class Create extends Component {
       price: parseInt(this.price.value),
       thumbnail: this.state.file,
     };
-    
+
     if (id !== 0) {
       // update
-      axios.patch(process.env.REACT_APP_HOST_API + `/api/product/${id}`, model).then((response) => {
-        this.props.history.push("/manageproduct");
-      });
+      axios
+        .patch(process.env.REACT_APP_HOST_API + `/api/product/${id}`, model)
+        .then((response) => {
+          this.props.history.push("/manageproduct");
+        });
     } else {
       // insert
-      axios.post(process.env.REACT_APP_HOST_API + `/api/product`, model).then((response) => {
-        this.props.history.push("/manageproduct");
-      });
+      axios
+        .post(process.env.REACT_APP_HOST_API + `/api/product`, model)
+        .then((response) => {
+          this.props.history.push("/manageproduct");
+        });
     }
   };
 
@@ -204,7 +210,7 @@ class UploadPreview extends Component {
             </button>
           )}
           <img
-            src={this.props.file && ("http://localhost:8080/" + this.props.file)}
+            src={this.props.file && "http://localhost:8080/" + this.props.file}
             className="w-100 position-absolute"
             style={{
               left: "50%",
