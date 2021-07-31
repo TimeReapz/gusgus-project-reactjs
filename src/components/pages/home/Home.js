@@ -9,7 +9,7 @@ const schedule = [
   { value: "วันพฤหัส", label: "วันพฤหัส" },
   { value: "วันอาทิตย์", label: "วันอาทิตย์" },
 ];
-axios.defaults.headers['Access-Control-Allow-Origin'] = "*";
+axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
 export default class Home extends Component {
   constructor(props) {
     super(props);
@@ -22,12 +22,19 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    axios.get(process.env.REACT_APP_HOST_API + `/api/order?name=`).then((response) => {
-      this.setState({
-        dataTableMain: response.data,
-        dataTable: response.data.filter((f) => f.schedule === "ทุกพระ 8,15"),
+    axios
+      .get(process.env.REACT_APP_HOST_API + `/api/order?name=`)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data !== null) {
+          this.setState({
+            dataTableMain: response.data,
+            dataTable: response.data.filter(
+              (f) => f.schedule === "ทุกพระ 8,15"
+            ),
+          });
+        }
       });
-    });
   }
 
   changeDataSchedule = (dataSchedule) => {
@@ -65,7 +72,7 @@ export default class Home extends Component {
                   {schedule.map((item, index) => (
                     <label
                       className={
-                        "btn btn-info mb-1 " + (index === 0 ? "active" : "")
+                        "btn btn-info mb-1" + (index === 0 ? "active" : "x")
                       }
                       key={index}
                     >
@@ -131,9 +138,11 @@ export default class Home extends Component {
                                   style={{ width: "220px" }}
                                 >
                                   {orderItem.productModel.name +
-                                    " (" +
-                                    orderItem.productModel.subType +
-                                    ")"}
+                                    (orderItem.productModel.subtype !== ""
+                                      ? " (" +
+                                        orderItem.productModel.subtype +
+                                        ")"
+                                      : "")}
                                 </span>
                                 <span className="info-box-number">
                                   {orderItem.productModel.price} ฿
@@ -151,7 +160,7 @@ export default class Home extends Component {
                       <div className="row">
                         <div className="col-6 text-lg d-table">
                           <div className="d-table-cell align-middle">
-                            ราคารวม <b>{item.totalPrice} ฿</b> 
+                            ราคารวม <b>{item.totalPrice} ฿</b>
                           </div>
                         </div>
                         <div className="col-6">
