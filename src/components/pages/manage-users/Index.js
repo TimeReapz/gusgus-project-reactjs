@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { SwalConfirm } from "../../../lib/script";
 import { Link } from "react-router-dom";
 
-axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
+
 export default class Index extends Component {
   constructor(props) {
     super(props);

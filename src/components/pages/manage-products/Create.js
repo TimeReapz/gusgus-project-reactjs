@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
+
 export default class Create extends Component {
   constructor(props) {
     super(props);
@@ -210,7 +210,7 @@ class UploadPreview extends Component {
             </button>
           )}
           <img
-            src={this.props.file && "http://localhost:8080/" + this.props.file}
+            src={this.props.file && process.env.REACT_APP_HOST_API + "/" + this.props.file}
             className="w-100 position-absolute"
             style={{
               left: "50%",

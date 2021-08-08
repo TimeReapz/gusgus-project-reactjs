@@ -9,7 +9,7 @@ const schedule = [
   { value: "วันพฤหัส", label: "วันพฤหัส" },
   { value: "วันอาทิตย์", label: "วันอาทิตย์" },
 ];
-axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
+
 export default class Home extends Component {
   constructor(props) {
     super(props);
@@ -46,8 +46,6 @@ export default class Home extends Component {
     this.forceUpdate();
   };
 
-  getOrders = () => {};
-
   render() {
     return (
       <div>
@@ -72,7 +70,7 @@ export default class Home extends Component {
                   {schedule.map((item, index) => (
                     <label
                       className={
-                        "btn btn-info mb-1" + (index === 0 ? "active" : "x")
+                        "btn btn-info mb-1 " + (index === 0 ? "active" : "")
                       }
                       key={index}
                     >
@@ -120,7 +118,7 @@ export default class Home extends Component {
                                 <img
                                   src={
                                     orderItem.productModel.thumbnail &&
-                                    "http://localhost:8080/" +
+                                    process.env.REACT_APP_HOST_API + "/" +
                                       orderItem.productModel.thumbnail
                                   }
                                   className="w-100 position-absolute"
