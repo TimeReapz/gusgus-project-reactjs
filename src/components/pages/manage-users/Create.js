@@ -1,35 +1,54 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import firebase from "../utils/firebase";
+import moment from "moment";
+import firebase from "../../../utils/firebase";
+import { useHistory } from "react-router-dom";
 
-export default function Create() {
-  const [name, setName] = useState('');
+export default function Create(props) {
+  const history = useHistory();
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
 
-  // useEffect(() => {
-  //   if (id) {
-  //     axios
-  //       .get(process.env.REACT_APP_HOST_API + `/api/user/${id}`)
-  //       .then((response) => {
-  //         this.name.value = response.data.name;
-  //       });
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (props.match.params.id) {
+      setId(props.match.params.id);
+      const modelRef = firebase
+        .database()
+        .ref("User")
+        .child(props.match.params.id);
+
+      modelRef.on("value", (snapshot) => {
+        const model = snapshot.val();
+        console.log(model);
+        setName(model.name);
+      });
+    }
+  }, [props.match.params.id]);
 
   const handleOnChange = (e) => {
     setName(e.target.value);
   };
 
-  const saveUser = () => {
-    const modelRef = firebase.database().ref('User');
-    const model = {
-      NAME: name,
-      CREATE_DATE: new Date(),
-      ISACTIVE: 1,
-      complete: false,
-    };
+  const saveUser = (e) => {
+    e.preventDefault();
+    if (id !== '') {
+      const modelRef = firebase.database().ref("User").child(id);
+      modelRef.update({
+        name: name,
+        update_date: moment().format()
+      });
+      history.push("/manageuser");
+    } else {
+      const modelRef = firebase.database().ref("User");
+      const model = {
+        name: name,
+        create_date: moment().format(),
+        isactive: 1,
+      };
 
-    modelRef.push(model);
+      modelRef.push(model);
+      history.push("/manageuser");
+    }
   };
 
   // const saveUser = (e) => {
@@ -88,7 +107,7 @@ export default function Create() {
                           className="form-control"
                           id="name"
                           placeholder="ชื่อลูกค้า"
-                          value={name} 
+                          value={name}
                           onChange={handleOnChange}
                         />
                       </div>
