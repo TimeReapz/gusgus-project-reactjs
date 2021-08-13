@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { SwalConfirm } from "../../../lib/script";
 import { Link } from "react-router-dom";
@@ -6,28 +5,65 @@ import firebase from "../../../utils/firebase";
 
 export default function Index() {
   const [dataTable, setdataTable] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const modelRef = firebase.database().ref("User");
+    const q = search;
+
+    const query = firebase
+      .database()
+      .ref("User")
+      .orderByChild("name")
+      .startAt(q)
+      .endAt(q + "\uf8ff");
     // listen every time data change in todo ref
-    modelRef.on("value", (snapshot) => {
-      const todos = snapshot.val();
-      const todoList = [];
-      for (let id in todos) {
-        todoList.push({ id, ...todos[id] });
+    query.on("value", (snapshot) => {
+      const models = snapshot.val();
+      const temp = [];
+      for (let id in models) {
+        temp.push({ id, ...models[id] });
       }
-      setdataTable(todoList);
+      setdataTable(temp);
     });
-  }, []);
+  }, [search]);
+
+  const handleOnChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const handleOnEnter = (e) => {
+    if (e.charCode === 13) {
+      searchUser();
+    }
+  };
 
   const delUser = (id) => {
     SwalConfirm.fire({
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        const modelRef = firebase.database().ref("User").child(id);
-        modelRef.remove();
+        const query = firebase.database().ref("User").child(id);
+        query.remove();
       }
+    });
+  };
+
+  const searchUser = () => {
+    var q = search;
+    const query = firebase
+      .database()
+      .ref("User")
+      .orderByChild("name")
+      .startAt(q)
+      .endAt(q + "\uf8ff");
+    // listen every time data change in todo ref
+    query.on("value", (snapshot) => {
+      const models = snapshot.val();
+      const temp = [];
+      for (let id in models) {
+        temp.push({ id, ...models[id] });
+      }
+      setdataTable(temp);
     });
   };
 
@@ -54,23 +90,23 @@ export default function Index() {
                       className="input-group input-group-sm"
                       style={{ width: 150 }}
                     >
-                      {/* <input
+                      <input
                         type="text"
                         name="queryName"
                         className="form-control"
                         placeholder="Search"
-                        ref={(input) => (this.queryName = input)}
-                        onChange={this.getUsers}
+                        onChange={handleOnChange}
+                        onKeyPress={handleOnEnter}
                       />
                       <div className="input-group-append">
                         <button
                           type="submit"
                           className="btn btn-default"
-                          onClick={() => this.getUsers()}
+                          onClick={() => searchUser()}
                         >
                           <i className="fas fa-search" />
                         </button>
-                      </div> */}
+                      </div>
                     </div>
                   </div>
                   <div className="card-tools">
@@ -94,7 +130,9 @@ export default function Index() {
                     </thead>
                     <tbody>
                       {dataTable
-                        ? dataTable.map((item) => (
+                        ? dataTable
+                        .sort((a, b) => a.name > b.name ? 1 : -1)
+                        .map((item) => (
                             <tr key={item.id}>
                               <td className="align-middle">{item.name}</td>
                               <td>
