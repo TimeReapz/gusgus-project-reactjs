@@ -1,152 +1,186 @@
-import axios from "axios";
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { SwalConfirm } from "../../../lib/script";
 import { Link } from "react-router-dom";
+import firebase from "../../../utils/firebase";
 
-axios.defaults.headers['Access-Control-Allow-Origin'] = "*";
-export default class Index extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      queryName: "",
-      dataTable: [],
-    };
-  }
+export default function Index() {
+  const [dataTable, setdataTable] = useState([]);
+  const [search, setSearch] = useState("");
 
-  componentDidMount() {
-    this.getOrders();
-  }
-
-  getOrders = () => {
-    var q = this.queryName.value;
-    axios.get(process.env.REACT_APP_HOST_API + `/api/order?name=${q}`).then((response) => {
-      if (response.data != null) {
-        console.log(response.data)
-
-        this.setState({
-          dataTable: response.data,
-        });
-      } else {
-        this.setState({
-          dataTable: [],
-        });
+  useEffect(() => {
+    const q = search;
+    console.log(search)
+    const query = firebase
+      .database()
+      .ref("tbOrderSchedule")
+      .orderByChild("tbUser/name")
+      .startAt(q)
+      .endAt(q + "\uf8ff");
+    // listen every time data change in todo ref
+    query.on("value", (snapshot) => {
+      const models = snapshot.val();
+      const temp = [];
+      for (let id in models) {
+        temp.push({ id, ...models[id] });
       }
+      setdataTable(temp);
     });
+
+    return () => {
+      setdataTable([]);
+    };
+  }, [search]);
+
+  const handleOnChange = (e) => {
+    setSearch(e.target.value);
   };
 
-  delOrder = (id) => {
+  const handleOnEnter = (e) => {
+    if (e.charCode === 13) {
+      searchOrder();
+    }
+  };
+
+  const delOrder = (id) => {
     SwalConfirm.fire({
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        axios.delete(process.env.REACT_APP_HOST_API + `/api/order/${id}`).then((response) => {
-          this.getOrders();
-        });
+        const query = firebase.database().ref("tbOrderSchedule").child(id);
+        query.remove();
       }
     });
   };
 
-  render() {
-    const { dataTable } = this.state;
-    return (
-      <div>
-        <section className="content-header">
-          <div className="container">
-            <div className="row mb-2">
-              <div className="col-sm-6">
-                <h1>รายการจัดส่ง</h1>
-              </div>
+  const searchOrder = () => {
+    console.log("searchOrder");
+    var q = search;
+    const query = firebase
+      .database()
+      .ref("tbOrderSchedule")
+      .orderByChild("tbUser/name")
+      .startAt(q)
+      .endAt(q + "\uf8ff");
+    // listen every time data change in todo ref
+    query.on("value", (snapshot) => {
+      const models = snapshot.val();
+      console.log(models);
+      const temp = [];
+      for (let id in models) {
+        temp.push({ id, ...models[id] });
+      }
+      setdataTable(temp);
+    });
+  };
+
+  return (
+    <div>
+      <section className="content-header">
+        <div className="container">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1>รายการจัดส่ง</h1>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="content">
-          <div className="container">
-            <div className="row">
-              <div className="col-12">
-                <div className="card">
-                  <div className="card-header">
-                    <div className="card-title">
-                      <div
-                        className="input-group input-group-sm"
-                        style={{ width: 150 }}
-                      >
-                        <input
-                          type="text"
-                          name="queryName"
-                          className="form-control"
-                          placeholder="Search"
-                          ref={(input) => (this.queryName = input)}
-                          onChange={this.getOrders}
-                        />
-                        <div className="input-group-append">
-                          <button
-                            type="submit"
-                            className="btn btn-default"
-                            onClick={() => this.getOrders()}
-                          >
-                            <i className="fas fa-search" />
-                          </button>
-                        </div>
+      <section className="content">
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <div className="card">
+                <div className="card-header">
+                  <div className="card-title">
+                    <div
+                      className="input-group input-group-sm"
+                      style={{ width: 150 }}
+                    >
+                      <input
+                        type="text"
+                        name="queryName"
+                        className="form-control"
+                        placeholder="Search"
+                        onChange={handleOnChange}
+                        onKeyPress={handleOnEnter}
+                      />
+                      <div className="input-group-append">
+                        <button
+                          type="submit"
+                          className="btn btn-default"
+                          onClick={() => searchOrder()}
+                        >
+                          <i className="fas fa-search" />
+                        </button>
                       </div>
                     </div>
-                    <div className="card-tools">
-                      <Link
-                        to="/manageorder-create"
-                        className="btn btn-warning float-right d-inline"
-                      >
-                        เพิ่ม
-                      </Link>
-                    </div>
                   </div>
-                  <div className="card-body table-responsive p-0">
-                    <table className="table table-hover text-nowrap">
-                      <thead>
-                        <tr>
-                          <th>ชื่อ</th>
-                          <th>วันที่จัดส่ง</th>
-                          <th>วิธีการจัดส่ง</th>
-                          <th width="1" className="text-center">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {dataTable.map((item) => (
-                          <tr key={item._id}>
-                            <td>{item.userModel.name}</td>
-                            <td>{item.schedule}</td>
-                            <td>{item.delivery}</td>
-                            <td>
-                              <Link
-                                to={{
-                                  pathname: `manageorder-create/${item._id}`
-                                }}
-                                className="btn btn-primary mr-2"
-                              >
-                                <i className="fas fa-edit"></i>
-                              </Link>
-                              <button
-                                type="button"
-                                className="btn btn-danger"
-                                onClick={() => this.delOrder(item.id)}
-                              >
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="card-tools">
+                    <Link
+                      to="/manageorder-schedule-create"
+                      className="btn btn-warning float-right d-inline"
+                    >
+                      เพิ่ม
+                    </Link>
                   </div>
-                  {/* /.card-body */}
                 </div>
-                {/* /.card */}
+                <div className="card-body table-responsive p-0">
+                  <table className="table table-hover text-nowrap">
+                    <thead>
+                      <tr>
+                        <th>ชื่อ</th>
+                        <th>วันที่จัดส่ง</th>
+                        <th>วิธีการจัดส่ง</th>
+                        <th width="1" className="text-center">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataTable
+                        ? dataTable
+                            .sort((a, b) => (a.name > b.name ? 1 : -1))
+                            .map((item) => (
+                              <tr key={item.id}>
+                                <td className="align-middle">
+                                  {item.tbUser.name}
+                                </td>
+                                <td className="align-middle">
+                                  {item.schedule}
+                                </td>
+                                <td className="align-middle">
+                                  {item.delivery}
+                                </td>
+                                <td className="align-middle">
+                                  <Link
+                                    to={{
+                                      pathname: `manageorder-schedule-create/${item.id}`,
+                                    }}
+                                    className="btn btn-primary mr-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                  <button
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={() => delOrder(item.id)}
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                        : ""}
+                    </tbody>
+                  </table>
+                </div>
+                {/* /.card-body */}
               </div>
+              {/* /.card */}
             </div>
           </div>
-        </section>
-      </div>
-    );
-  }
+        </div>
+      </section>
+    </div>
+  );
 }

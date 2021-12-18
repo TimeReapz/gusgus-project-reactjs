@@ -12,13 +12,14 @@ export default function Index() {
 
     const query = firebase
       .database()
-      .ref("Product")
+      .ref("tbProduct")
       .orderByChild("name")
       .startAt(q)
       .endAt(q + "\uf8ff");
     // listen every time data change in todo ref
     query.on("value", (snapshot) => {
       const models = snapshot.val();
+      console.log(models)
       const temp = [];
       for (let id in models) {
         temp.push({ id, ...models[id] });
@@ -27,7 +28,6 @@ export default function Index() {
     });
 
     return () => {
-      setSearch("");
       setdataTable([]);
     };
   }, [search]);
@@ -47,7 +47,7 @@ export default function Index() {
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        const query = firebase.database().ref("Product").child(id);
+        const query = firebase.database().ref("tbProduct").child(id);
         query.remove();
       }
     });
@@ -129,8 +129,8 @@ export default function Index() {
                       <tr>
                         <th>ชื่อสินค้า</th>
                         <th>ประเภท</th>
-                        <th className="text-right">ราคา</th>
-                        <th className="text-center">รูป</th>
+                        <th>ราคา</th>
+                        <th>รูป</th>
                         <th width="1" className="text-center">
                           Action
                         </th>

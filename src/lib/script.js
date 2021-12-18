@@ -9,7 +9,6 @@ const SwalToast = Swal.mixin({
 const SwalConfirm = Swal.mixin({
   title: "ยืนยันการทำรายการ",
   text: "",
-  type: "warning",
   showCancelButton: true,
   confirmButtonColor: "#3085d6",
   cancelButtonColor: "#d33",
@@ -17,7 +16,6 @@ const SwalConfirm = Swal.mixin({
   confirmButtonText: "ยืนยัน",
 });
 const SwalAlert = Swal.mixin({
-  type: "error",
   title: "ผิดพลาด",
   text: "",
   allowOutsideClick: false,

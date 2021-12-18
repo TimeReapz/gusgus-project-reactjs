@@ -32,14 +32,14 @@ export default function Create(props) {
   const saveUser = (e) => {
     e.preventDefault();
     if (id !== '') {
-      const modelRef = firebase.database().ref("User").child(id);
+      const modelRef = firebase.database().ref("tbUser").child(id);
       modelRef.update({
         name: name,
         update_date: moment().format()
       });
       history.push("/manageuser");
     } else {
-      const modelRef = firebase.database().ref("User");
+      const modelRef = firebase.database().ref("tbUser");
       const model = {
         name: name,
         create_date: moment().format(),

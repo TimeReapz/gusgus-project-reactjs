@@ -30,7 +30,7 @@ export default function MenuTop() {
             <ul className="navbar-nav">
               <li className="nav-item">
                 <NavLink
-                  to="/manageorder"
+                  to="/manageorder-schedule"
                   className="nav-link"
                   activeClassName="active"
                 >

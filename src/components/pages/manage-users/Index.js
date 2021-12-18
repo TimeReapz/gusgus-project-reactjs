@@ -12,7 +12,7 @@ export default function Index() {
 
     const query = firebase
       .database()
-      .ref("User")
+      .ref("tbUser")
       .orderByChild("name")
       .startAt(q)
       .endAt(q + "\uf8ff");
@@ -25,6 +25,10 @@ export default function Index() {
       }
       setdataTable(temp);
     });
+
+    return () => {
+      setdataTable([]);
+    };
   }, [search]);
 
   const handleOnChange = (e) => {
@@ -42,7 +46,7 @@ export default function Index() {
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        const query = firebase.database().ref("User").child(id);
+        const query = firebase.database().ref("tbUser").child(id);
         query.remove();
       }
     });

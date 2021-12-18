@@ -8,8 +8,8 @@ import ManageUser from "./components/pages/manage-users/Index";
 import ManageUserCreate from "./components/pages/manage-users/Create";
 import ManageProduct from "./components/pages/manage-products/Index";
 import ManageProductCreate from "./components/pages/manage-products/Create";
-import ManageOrder from "./components/pages/manage-orders/Index";
-import ManageOrderCreate from "./components/pages/manage-orders/Create";
+import ManageOrderSchedule from "./components/pages/manage-orders/Index";
+import ManageOrderScheduleCreate from "./components/pages/manage-orders/Create";
 
 const routes = [
   {
@@ -42,16 +42,16 @@ const routes = [
     component: ManageProductCreate,
   },
   {
-    path: "/manageorder",
-    component: ManageOrder,
+    path: "/manageorder-schedule",
+    component: ManageOrderSchedule,
   },
   {
-    path: "/manageorder-create/:id",
-    component: ManageOrderCreate,
+    path: "/manageorder-schedule-create/:id",
+    component: ManageOrderScheduleCreate,
   },
   {
-    path: "/manageorder-create",
-    component: ManageOrderCreate,
+    path: "/manageorder-schedule-create",
+    component: ManageOrderScheduleCreate,
   },
 ];
 

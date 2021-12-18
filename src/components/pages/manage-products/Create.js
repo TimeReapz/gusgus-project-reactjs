@@ -31,9 +31,6 @@ export default function Create(props) {
       });
     }
 
-    return () => {
-      setProduct({}); // Clean up
-    };
   }, [props.match.params.id]);
 
   const saveProduct = (e) => {
@@ -41,7 +38,7 @@ export default function Create(props) {
     e.preventDefault();
     if (product.id !== "") {
       console.log(product.id);
-      const modelRef = firebase.database().ref("Product").child(product.id);
+      const modelRef = firebase.database().ref("tbProduct").child(product.id);
       const model = {
         name: product.name,
         subType: product.subType,
@@ -53,7 +50,7 @@ export default function Create(props) {
       modelRef.update(model);
       history.push("/manageproduct");
     } else {
-      const modelRef = firebase.database().ref("Product");
+      const modelRef = firebase.database().ref("tbProduct");
       const model = {
         name: product.name,
         subType: product.subType,
@@ -126,6 +123,7 @@ export default function Create(props) {
                         <label htmlFor="price">ราคา</label>
                         <input
                           type="number"
+                          min="1"
                           className="form-control"
                           id="price"
                           placeholder="ราคา"

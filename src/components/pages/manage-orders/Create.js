@@ -1,6 +1,8 @@
-import axios from "axios";
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import moment from "moment";
+import firebase from "../../../utils/firebase";
+import { useHistory } from "react-router-dom";
 import Select from "react-select";
 
 const schedule = [
@@ -17,75 +19,89 @@ const delivery = [
   { value: "มาเอาที่ตลาด", label: "มาเอาที่ตลาด" },
 ];
 
-axios.defaults.headers['Access-Control-Allow-Origin'] = "*";
-export default class Create extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      id: props.match.params.id ?? 0,
-      userDropdown: [],
-      productDropdownGroup: [],
-      productDropdown: [],
-      productList: [],
-      userId: "",
-      schedule: "",
-      delivery: "",
-      orderItems: [
-        {
-          productId: "",
-          qty: "",
-        },
-      ],
-    };
-    this.handleUserChange = this.handleUserChange.bind(this);
-    this.handleScheduleChange = this.handleScheduleChange.bind(this);
-    this.handleDeliveryChange = this.handleDeliveryChange.bind(this);
-  }
+export default function Create(props) {
+  const history = useHistory();
 
-  componentDidMount() {
-    this.init();
-  }
+  const initOrderSchedule = {
+    id: '',
+    userId: '',
+    schedule: '',
+    delivery: '',
+    remark: '',
+    orderScheduleItems: [
+      {
+        productId: '',
+        qty: '',
+      },
+    ],
+    totalPrice: 0
+  };
 
-  init() {
-    const id = this.state.id;
-    if (id) {
-      axios.get(process.env.REACT_APP_HOST_API + `/api/order/${id}`).then((response) => {
-        console.log(response)
-        this.setState({
-          userId: response.data.userId,
-          orderItems: response.data.orderItems,
-          schedule: response.data.schedule,
-          delivery: response.data.delivery,
-        });
-        this.totalPrice.value = response.data.totalPrice
+  const [orderSchedule, setOrderSchedule] = useState(initOrderSchedule);
+  const [userDropdown, setUserDropdown] = useState([]);
+  const [productDropdownGroup, setProductDropdownGroup] = useState([]);
+  const [productDropdown, setProductDropdown] = useState([]);
+
+  useEffect(() => {
+    if (props.match.params.id) {
+      const modelRef = firebase
+        .database()
+        .ref("tbOrderSchedule")
+        .child(props.match.params.id);
+
+      modelRef.on("value", (snapshot) => {
+        const model = snapshot.val();
+        console.log(model)
+        setOrderSchedule({ ...model, id: props.match.params.id });
       });
     }
 
-    // get user
-    axios.get(process.env.REACT_APP_HOST_API + `/api/user?q=`).then((response) => {
-      var tempArr = [];
-      response.data.forEach((item) => {
+    return () => {
+      setOrderSchedule({}); // Clean up
+    };
+  }, [props.match.params.id]);
+
+  useEffect(() => {
+    // dropdown user
+    const userRef = firebase.database().ref("tbUser").orderByChild("name");
+
+    userRef.on("value", (snapshot) => {
+      const models = snapshot.val();
+      const temp = [];
+      for (let id in models) {
         var obj = {
-          value: item.id,
-          label: item.name,
+          value: id,
+          label: models[id].name,
         };
-        tempArr.push(obj);
-      });
-
-      this.setState({
-        userDropdown: tempArr,
-      });
+        temp.push(obj);
+      }
+      setUserDropdown(temp);
     });
+  }, []);
 
-    // get product
-    axios.get(process.env.REACT_APP_HOST_API + `/api/product?q=`).then((response) => {
+  useEffect(() => {
+    // dropdown product
+    const productRef = firebase.database().ref("tbProduct").orderByChild("name");
+
+    productRef.on("value", (snapshot) => {
+      const models = snapshot.val();
+      const temp = [];
+      for (let id in models) {
+        var obj = {
+          id: id,
+          ...models[id],
+        };
+        temp.push(obj);
+      }
+
       var tempArrGroup = [];
       var tempArr = [];
-      response.data
+      temp
         .sort((a, b) => a.name - b.name)
         .forEach((item) => {
           var obj = {
             value: item.id,
+            price: item.price,
             label:
               item.name +
               (item.subType !== "" ? "(" + item.subType + ")" : "") +
@@ -107,302 +123,356 @@ export default class Create extends Component {
           tempArr.push(obj);
         });
 
-      this.setState({
-        productDropdownGroup: tempArrGroup,
-        productDropdown: tempArr,
-        productList: response.data,
+      setProductDropdownGroup(tempArrGroup);
+      setProductDropdown(tempArr);
+    });
+  }, []);
+
+  const save = (e) => {
+    console.log("submit");
+    e.preventDefault();
+    console.log(orderSchedule);
+    if (orderSchedule.id !== "") {
+      console.log(orderSchedule.id);
+
+      let model = {
+        userId: orderSchedule.userId,
+        totalPrice: parseInt(orderSchedule.totalPrice),
+        schedule: orderSchedule.schedule,
+        delivery: orderSchedule.delivery,
+        remark: orderSchedule.remark,
+        update_date: moment().format(),
+      };
+      const userRef = firebase
+        .database()
+        .ref("tbUser")
+        .child(orderSchedule.userId);
+      userRef.once("value", (snap) => (model = { ...model, tbUser: snap.val() }));
+
+      orderSchedule.orderScheduleItems.forEach((item, index) => {
+        const productRef = firebase
+          .database()
+          .ref("tbProduct")
+          .child(item.productId);
+        productRef.once(
+          "value",
+          (snap) =>
+            (orderSchedule.orderScheduleItems[index].tbProduct = snap.val())
+        );
+        console.log(orderSchedule.orderScheduleItems);
       });
-    });
-  }
+      console.log(orderSchedule.orderScheduleItems);
+      model = {
+        ...model,
+        orderScheduleItems: orderSchedule.orderScheduleItems,
+      };
 
-  // handleChange(evt) {
-  //   console.log(evt)
-  //   const value =
-  //     evt.target.type === "checkbox" ? evt.target.checked : evt.target.value;
-  //   this.setState({
-  //     ...this.state,
-  //     [evt.target.name]: value
-  //   });
-  // }
+      const modelRef = firebase
+        .database()
+        .ref("tbOrderSchedule")
+        .child(orderSchedule.id);
+      modelRef.update(model);
+      history.push("/manageorder-schedule");
+    } else {
+      let model = {
+        userId: orderSchedule.userId,
+        totalPrice: parseInt(orderSchedule.totalPrice),
+        schedule: orderSchedule.schedule,
+        delivery: orderSchedule.delivery,
+        remark: orderSchedule.remark,
+        create_date: moment().format(),
+        isactive: 1,
+      };
+      const userRef = firebase
+        .database()
+        .ref("tbUser")
+        .child(orderSchedule.userId);
+      userRef.once("value", (snap) => (model = { ...model, tbUser: snap.val() }));
 
-  handleUserChange(e) {
-    this.setState({
-      userId: e.value,
-    });
-  }
+      orderSchedule.orderScheduleItems.forEach((item, index) => {
+        const productRef = firebase
+          .database()
+          .ref("tbProduct")
+          .child(item.productId);
+        productRef.once(
+          "value",
+          (snap) =>
+            (orderSchedule.orderScheduleItems[index].tbProduct = snap.val())
+        );
+        console.log(orderSchedule.orderScheduleItems);
+      });
+      console.log(orderSchedule.orderScheduleItems);
+      model = {
+        ...model,
+        orderScheduleItems: orderSchedule.orderScheduleItems,
+      };
 
-  handleScheduleChange(e) {
-    this.setState({
-      schedule: e.value,
-    });
-  }
+      const modelRef = firebase.database().ref("tbOrderSchedule");
+      modelRef.push(model);
+      history.push("/manageorder-schedule");
+    }
+  };
 
-  handleDeliveryChange(e) {
-    this.setState({
-      delivery: e.value,
-    });
-  }
-
-  handleOrderItemChange = (orderItem, index) => {
-    if (orderItem.length === 0) {
-      let orderItems = [...this.state.orderItems];
-      orderItems.splice(index, 1);
-      this.setState({ orderItems });
+  const handleOrderScheduleItemChange = (index, orderScheduleItem) => {
+    if (Object.keys(orderScheduleItem).length === 0) {
+      let orderScheduleItems = [...orderSchedule.orderScheduleItems];
+      orderScheduleItems.splice(index, 1);
+      setOrderSchedule({
+        ...orderSchedule,
+        orderScheduleItems: orderScheduleItems,
+      });
     } else {
       // 1. Make a shallow copy of the items
-      let orderItems = [...this.state.orderItems];
+      let orderScheduleItems = [...orderSchedule.orderScheduleItems];
       // 2. Make a shallow copy of the item you want to mutate
       //let item = {...orderItems[index]};
       // 3. Replace the property you're intested in
       //item.name = 'newName';
       // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-      orderItems[index] = orderItem;
+      orderScheduleItems[index] = orderScheduleItem;
       // 5. Set the state to our new copy
-      this.setState({ orderItems });
+      setOrderSchedule({ ...orderSchedule, orderScheduleItems });
     }
+    
   };
 
-  addEmptyOrderItem = () => {
-    let orderItems = [...this.state.orderItems];
-    orderItems.push({
+  const addEmptyOrderScheduleItem = () => {
+    let orderScheduleItems = [...orderSchedule.orderScheduleItems];
+    orderScheduleItems.push({
       productId: "",
       qty: "",
     });
-    this.setState({ orderItems });
+    setOrderSchedule({ ...orderSchedule, orderScheduleItems });
   };
 
-  saveOrder = (e) => {
-    e.preventDefault();
-    var id = this.state.id;
-
-    var model = {
-      userId: this.state.userId,
-      orderItems: this.state.orderItems,
-      totalPrice: parseInt(this.totalPrice.value ?? 0),
-      delivery: this.state.delivery,
-      schedule: this.state.schedule,
-      remark: this.remark.value
-    };
-
-    if (id !== 0) {
-      // update
-      axios.patch(process.env.REACT_APP_HOST_API + `/api/order/${id}`, model).then((response) => {
-        this.props.history.push("/manageorder");
-      });
-    } else {
-      // insert
-      axios.post(process.env.REACT_APP_HOST_API + `/api/order`, model).then((response) => {
-        this.props.history.push("/manageorder");
-      });
-    }
-  };
-
-  render() {
-    return (
-      <div>
-        <section className="content-header">
-          <div className="container">
-            <div className="row mb-2">
-              <div className="col-sm-6">
-                <h1>รายชื่อลูกค้า</h1>
-              </div>
+  return (
+    <div>
+      <section className="content-header">
+        <div className="container">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1>รายชื่อลูกค้า</h1>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="content">
-          <div className="container">
-            <div className="row">
-              <div className="col-12">
-                <div className="card card-outline card-primary">
-                  <div className="card-header">
-                    <div className="card-title">
-                      <h3 className="card-title">เพิ่มรายชื่อลูกค้า</h3>
+      <section className="content">
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <div className="card card-outline card-primary">
+                <div className="card-header">
+                  <div className="card-title">
+                    <h3 className="card-title">เพิ่มรายชื่อลูกค้า</h3>
+                  </div>
+                </div>
+                <div className="card-body table-responsive p-0">
+                  <form onSubmit={save}>
+                    <div className="card-body">
+                      <div className="form-group">
+                        <label htmlFor="userId">ชื่อลูกค้า</label>
+                        <Select
+                          options={userDropdown}
+                          id="userId"
+                          value={userDropdown.filter(
+                            (options) => options.value === orderSchedule.userId
+                          )}
+                          onChange={(e) => {
+                            setOrderSchedule({
+                              ...orderSchedule,
+                              userId: e.value,
+                            });
+                          }}
+                          isSearchable={false}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="userId">รายการสินค้า</label>
+                        {orderSchedule.orderScheduleItems.map((item, index) => {
+                          return (
+                            <OrderScheduleItemFunc
+                              key={index}
+                              index={index}
+                              orderScheduleItem={item}
+                              productDropdownGroup={productDropdownGroup}
+                              productDropdown={productDropdown}
+                              onOrderScheduleItemChange={
+                                handleOrderScheduleItemChange
+                              }
+                            />
+                          );
+                        })}
+                        <button
+                          type="button"
+                          className="border text-center m-auto d-block px-3 btn btn-primary"
+                          onClick={addEmptyOrderScheduleItem}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="totalPrice">ราคารวม</label>
+                        <input
+                          type="number"
+                          min="1"
+                          className="form-control"
+                          id="totalPrice"
+                          onChange={(e) => {
+                            setOrderSchedule({
+                              ...orderSchedule,
+                              totalPrice: e.target.value,
+                            });
+                          }}
+                          value={orderSchedule.totalPrice}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="schedule">วันที่จัดส่ง</label>
+                        <Select
+                          options={schedule}
+                          id="schedule"
+                          onChange={(e) => {
+                            setOrderSchedule({
+                              ...orderSchedule,
+                              schedule: e.value,
+                            });
+                          }}
+                          isSearchable={false}
+                          value={schedule.filter(
+                            (options) =>
+                              options.value === orderSchedule.schedule
+                          )}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="delivery">วิธีการจัดส่ง</label>
+                        <Select
+                          options={delivery}
+                          id="delivery"
+                          onChange={(e) => {
+                            setOrderSchedule({
+                              ...orderSchedule,
+                              delivery: e.value,
+                            });
+                          }}
+                          isSearchable={false}
+                          value={delivery.filter(
+                            (options) =>
+                              options.value === orderSchedule.delivery
+                          )}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="remark">หมายเหตุ</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="remark"
+                          onChange={(e) => {
+                            setOrderSchedule({
+                              ...orderSchedule,
+                              remark: e.target.value,
+                            });
+                          }}
+                          value={orderSchedule.remark}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="card-body table-responsive p-0">
-                    <form onSubmit={this.saveOrder}>
-                      <div className="card-body">
-                        <div className="form-group">
-                          <label htmlFor="userId">ชื่อลูกค้า</label>
-                          <Select
-                            options={this.state.userDropdown}
-                            id="userId"
-                            value={this.state.userDropdown.filter(
-                              (options) => options.value === this.state.userId)
-                            }
-                            onChange={this.handleUserChange}
-                            isSearchable={false}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="userId">รายการสินค้า</label>
-                          {this.state.orderItems.map((item, index) => {
-                            return (
-                              <OrderItemCart
-                                key={index}
-                                index={index}
-                                orderItem={item}
-                                productDropdown={this.state.productDropdown}
-                                productDropdownGroup={
-                                  this.state.productDropdownGroup
-                                }
-                                onOrderItemChange={this.handleOrderItemChange}
-                              />
-                            );
-                          })}
-                          <button
-                            type="button"
-                            className="border text-center m-auto d-block px-3 btn btn-primary"
-                            onClick={this.addEmptyOrderItem}
-                          >
-                            +
-                          </button>
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="totalPrice">ราคารวม</label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            id="totalPrice"
-                            ref={(input) => (this.totalPrice = input)}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="schedule">วันที่จัดส่ง</label>
-                          <Select
-                            options={schedule}
-                            id="schedule"
-                            onChange={this.handleScheduleChange}
-                            isSearchable={false}
-                            value={schedule.filter(
-                              (options) => options.value === this.state.schedule)
-                            }
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="delivery">วิธีการจัดส่ง</label>
-                          <Select
-                            options={delivery}
-                            id="delivery"
-                            onChange={this.handleDeliveryChange}
-                            isSearchable={false}
-                            value={delivery.filter(
-                              (options) => options.value === this.state.delivery)
-                            }
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="remark">หมายเหตุ</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="remark"
-                            ref={(input) => (this.remark = input)}
-                          />
-                        </div>
+                    <div className="card-footer">
+                      <Link
+                        to="/manageorder-schedule"
+                        className="btn btn-danger mr-2"
+                      >
+                        Back
+                      </Link>
+                      <div className="float-right">
+                        <button type="submit" className="btn btn-primary">
+                          Submit
+                        </button>
                       </div>
-                      <div className="card-footer">
-                        <Link to="/manageorder" className="btn btn-danger mr-2">
-                          Back
-                        </Link>
-                        <div className="float-right">
-                          <button type="submit" className="btn btn-primary">
-                            Submit
-                          </button>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      </div>
-    );
-  }
+        </div>
+      </section>
+    </div>
+  );
 }
 
-class OrderItemCart extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      productId: this.props.orderItem.productId ?? "",
-      qty: this.props.orderItem.qty ?? 0,
-    };
+function OrderScheduleItemFunc(props) {
+  useEffect(() => {
+    setOrderScheduleItem(props.orderScheduleItem)
+  }, [props.orderScheduleItem]);
+  
+  const initOrderScheduleItem = {
+    productId: "",
+    qty: "",
+  };
+  const [orderScheduleItem, setOrderScheduleItem] = useState(
+    initOrderScheduleItem
+  );
 
-    this.onProductChange = this.onProductChange.bind(this);
-    this.onQtyChange = this.onQtyChange.bind(this);
-    this.removeOrderItem = this.removeOrderItem.bind(this);
-  }
-
-  onProductChange(event) {
-    this.setState({
-      productId: event.value,
-    });
-
-    var obj = {
-      productId: event.value,
-      qty: this.state.qty,
-    };
-
-    this.props.onOrderItemChange(obj, this.props.index);
-  }
-
-  onQtyChange(event) {
-    this.setState({
-      qty: event.target.value,
-    });
-
-    var obj = {
-      productId: this.state.productId,
-      qty: parseInt(event.target.value ?? 0),
-    };
-
-    this.props.onOrderItemChange(obj, this.props.index);
-  }
-
-  removeOrderItem(event) {
+  const removeOrderItem = (event) => {
     event.preventDefault();
-    this.props.onOrderItemChange([], this.props.index);
-  }
+    props.onOrderScheduleItemChange({}, props.index);
+  };
 
-  render() {
-    return (
-      <div>
-        <div className="row">
-          <div className="col-8 mb-2 pr-0">
-            <Select
-              value={this.props.productDropdown.filter(
-                (options) => options.value === this.props.orderItem.productId
-              )}
-              options={this.props.productDropdownGroup}
-              id="productId"
-              onChange={this.onProductChange}
-              isSearchable={false}
-            />
-          </div>
-          <div className="col-3">
-            <input
-              type="number"
-              className="form-control text-right"
-              placeholder="จำนวน"
-              onChange={this.onQtyChange}
-              value={this.props.orderItem.qty}
-              pattern="[0-9]*|\s"
-            />
-          </div>
-          <div className="col-1 pl-0">
-            <button
-              className="btn btn-danger btn-block px-0"
-              onClick={this.removeOrderItem}
-            >
-              X
-            </button>
-          </div>
+  return (
+    <div>
+      <div className="row">
+        <div className="col-8 mb-2 pr-0">
+          <Select
+            options={props.productDropdownGroup}
+            id="productId"
+            onChange={(e) => {
+              setOrderScheduleItem({
+                ...orderScheduleItem,
+                productId: e.value,
+              });
+              props.onOrderScheduleItemChange(props.index, {
+                ...orderScheduleItem,
+                productId: e.value,
+              });
+            }}
+            isSearchable={false}
+            value={props.productDropdown.filter(
+              (options) => options.value === props.orderScheduleItem.productId
+            )}
+          />
+        </div>
+        <div className="col-3">
+          <input
+            type="number"
+            min="1"
+            className="form-control text-right"
+            placeholder="จำนวน"
+            onChange={(e) => {
+              setOrderScheduleItem({
+                ...orderScheduleItem,
+                qty: e.target.value,
+              });
+              props.onOrderScheduleItemChange(props.index, {
+                ...orderScheduleItem,
+                qty: e.target.value,
+              });
+            }}
+            value={props.orderScheduleItem.qty}
+            pattern="[0-9]*|\s"
+          />
+        </div>
+        <div className="col-1 pl-0">
+          <button
+            className="btn btn-danger btn-block px-0"
+            onClick={removeOrderItem}
+          >
+            X
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
