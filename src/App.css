@@ -1,0 +1,617 @@
+/** LOGIN *****************************************************/
+@font-face {
+  font-family: "supermarket";
+  src: url("../webfonts/supermarket.ttf") format("truetype");
+}
+/** LOGIN *****************************************************/
+.input-group-append {
+  border-radius: 0;
+}
+
+.login-logo {
+  margin-bottom: 0;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+/** JTABLE *****************************************************/
+.table-responsive > div {
+  min-width: 910px;
+}
+
+div.jtable-main-container > div.jtable-bottom-panel select {
+  color: black;
+}
+
+.jtable-title-text {
+  line-height: 45px !important;
+}
+
+.jtable-filter-custom {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 200px;
+  height: 34px;
+  padding: 6px 6px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  -webkit-transition: border-color ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+}
+/** JTABLE -THEME CUSTOM *****************************************************/
+/*div.jtable-main-container > div.jtable-title {
+    background-color: #f39c12;
+}
+
+div.jtable-main-container > table.jtable > thead {
+    background-color: #ffad16;
+}
+
+div.jtable-main-container > table.jtable {
+    border: 1px solid #ffad16;
+}
+
+div.jtable-main-container > div.jtable-bottom-panel {
+    background-color: #ffad16;
+    border: 1px solid #ffad16;
+}
+
+    div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-space, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-first, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-last, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-previous, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-next, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-active {
+        background-color: #f39c12;
+    }
+
+        div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number:hover, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-first:hover, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-last:hover, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-previous:hover, div.jtable-main-container > div.jtable-bottom-panel .jtable-page-list .jtable-page-number-next:hover {
+            background-color: #ffad16;
+        }
+
+div.jtable-busy-message {
+    background-color: #ffad16;
+}*/
+/** Validation *************************************************/
+.input-validation-error {
+  border: 1px solid red;
+}
+
+.input-validation-error + .input-group-append {
+  border: 1px solid red;
+  border-left: none;
+}
+
+.validation-summary-valid {
+  display: none;
+}
+
+.validation-summary-errors ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.validation-summary-errors ul li::before {
+  content: "ERROR : ";
+  font-weight: bold;
+}
+
+.validation-summary-success ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.validation-summary-success ul li::before {
+  content: "SUCCESSFUL : ";
+  font-weight: bold;
+}
+
+/** LOADING ****************************************************/
+#load {
+  font-size: 26px;
+  position: absolute;
+  width: 600px;
+  height: 36px;
+  left: 50%;
+  top: 40%;
+  margin-left: -300px;
+  overflow: visible;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+#load div {
+  position: absolute;
+  width: 20px;
+  height: 36px;
+  opacity: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  animation: move 2s linear infinite;
+  -o-animation: move 2s linear infinite;
+  -moz-animation: move 2s linear infinite;
+  -webkit-animation: move 2s linear infinite;
+  transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  color: #35c4f0;
+}
+
+#load div:nth-child(2) {
+  animation-delay: 0.2s;
+  -o-animation-delay: 0.2s;
+  -moz-animation-delay: 0.2s;
+  -webkit-animation-delay: 0.2s;
+}
+
+#load div:nth-child(3) {
+  animation-delay: 0.4s;
+  -o-animation-delay: 0.4s;
+  -webkit-animation-delay: 0.4s;
+  -webkit-animation-delay: 0.4s;
+}
+
+#load div:nth-child(4) {
+  animation-delay: 0.6s;
+  -o-animation-delay: 0.6s;
+  -moz-animation-delay: 0.6s;
+  -webkit-animation-delay: 0.6s;
+}
+
+#load div:nth-child(5) {
+  animation-delay: 0.8s;
+  -o-animation-delay: 0.8s;
+  -moz-animation-delay: 0.8s;
+  -webkit-animation-delay: 0.8s;
+}
+
+#load div:nth-child(6) {
+  animation-delay: 1s;
+  -o-animation-delay: 1s;
+  -moz-animation-delay: 1s;
+  -webkit-animation-delay: 1s;
+}
+
+#load div:nth-child(7) {
+  animation-delay: 1.2s;
+  -o-animation-delay: 1.2s;
+  -moz-animation-delay: 1.2s;
+  -webkit-animation-delay: 1.2s;
+}
+
+@keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+
+  35% {
+    left: 41%;
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  65% {
+    left: 59%;
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    left: 100%;
+    -moz-transform: rotate(-180deg);
+    -webkit-transform: rotate(-180deg);
+    -o-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+
+  35% {
+    left: 41%;
+    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  65% {
+    left: 59%;
+    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    left: 100%;
+    -moz-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+
+  35% {
+    left: 41%;
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  65% {
+    left: 59%;
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    left: 100%;
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+    opacity: 0;
+  }
+}
+
+@-o-keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+
+  35% {
+    left: 41%;
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  65% {
+    left: 59%;
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    left: 100%;
+    -o-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+    opacity: 0;
+  }
+}
+
+/** Required *****************************************************************/
+.star::after {
+  content: "*";
+  color: red;
+}
+
+/** เส้นแยกหัวข้อใน 1 หน้า**************************************************************************/
+.header_border-bottom {
+  border-bottom: 1px solid #f4f4f4;
+  margin-bottom: 10px;
+}
+
+/**************************************/
+.form-horizontal .control-label.text-left {
+  text-align: left;
+}
+
+/**for typeahead in modal************************************/
+.typeahead {
+  z-index: 1051;
+}
+
+.hide {
+  display: none;
+}
+
+/******************TimeLine***********************/
+#boxTimeline {
+  height: 170px;
+}
+
+.flex-parent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.input-flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  height: 150px;
+  padding-top: 25px;
+  max-width: 1250px;
+  position: relative;
+  z-index: 0;
+}
+
+.input {
+  width: 50px;
+  height: 50px;
+  margin: 0 32px 70px;
+  background-color: #aeb6bf;
+  position: relative;
+  border-radius: 50%;
+}
+
+.input:hover {
+  cursor: pointer;
+}
+
+.input::before,
+.input::after {
+  content: none;
+}
+
+.input::before {
+  left: -35px;
+}
+
+.input::after {
+  right: -35px;
+}
+
+.input.active {
+  background-color: #007bff;
+}
+
+.input.active::before {
+  background-color: #007bff;
+}
+
+.input.active::after {
+  background-color: #aeb6bf;
+}
+
+.input.active span {
+  font-weight: 700;
+}
+
+.input.active span::before {
+  font-size: 18px;
+}
+
+.input.active span::after {
+  font-size: 18px;
+  text-align: center;
+}
+
+.input.active ~ .input,
+.input.active ~ .input::before,
+.input.active ~ .input::after {
+  background-color: #aeb6bf;
+}
+
+.input span {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: block;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+}
+
+.input span::before,
+.input span::after {
+  visibility: visible;
+  position: absolute;
+  left: 50%;
+}
+
+.input span::after {
+  content: attr(data-year);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  text-align: center;
+  color: #ecf0f1;
+}
+
+.input span::before {
+  content: attr(data-info);
+  top: calc(100% + 5px);
+  width: 100px;
+  transform: translateX(-50%);
+  font-size: 18px;
+  text-indent: 0;
+  text-align: center;
+}
+
+.input i {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 25px;
+  text-align: center;
+  color: #ecf0f1;
+}
+
+@media (min-width: 1250px) {
+  .input::before {
+    left: -37.5px;
+  }
+
+  .input::after {
+    right: -37.5px;
+  }
+}
+
+@media (max-width: 850px) {
+  .flex-parent {
+    justify-content: initial;
+  }
+
+  #boxTimeline {
+    height: 155px;
+  }
+}
+
+@media (max-width: 400px) {
+  body {
+    min-height: 950px;
+  }
+
+  #boxTimeline {
+    height: 155px;
+  }
+}
+
+/******************flip-card***********************/
+.flip-card {
+  height: 300px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 75%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.75rem;
+}
+
+.flip-card.active .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: table;
+  text-align: center;
+}
+
+.flip-card-front {
+  color: white;
+  font-size: 32px;
+}
+
+.flip-card-back {
+  color: white;
+  font-size: 32px;
+  transform: rotateY(180deg);
+}
+
+.text-front,
+.text-back {
+  display: table-cell;
+  vertical-align: middle;
+  color: white;
+}
+
+/******************Table Flexbox***********************/
+.css-table {
+  display: table;
+  width: 100%;
+}
+
+.css-table-header {
+  display: table-header-group;
+  font-weight: bold;
+  background-color: rgb(191, 191, 191);
+}
+
+.css-table-body {
+  display: table-row-group;
+}
+
+.css-table-row {
+  display: table-row;
+}
+
+.css-table-header div,
+.css-table-row div {
+  display: table-cell;
+  padding: 0 6px;
+}
+
+.css-table-header div {
+  text-align: center;
+  border: 1px solid rgb(255, 255, 255);
+}
+
+.css-table-header div {
+  padding: 5px;
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.css-table-row div {
+  padding: 5px;
+}
+
+/****************** Overried Style ***********************/
+.btn {
+  border-radius: 0.75rem;
+}
+
+.content-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.rounded {
+  border-radius: 0.75rem !important;
+}
+
+body {
+  font-size: 1.15rem;
+}
+
+/* [2] Transition property for smooth transformation of images */
+.img-hover-zoom img {
+  transition: transform 0.5s ease;
+}
+
+/* [3] Finally, transforming the image when container gets hovered */
+.img-hover-zoom:hover img {
+  transform: scale(1.2);
+}

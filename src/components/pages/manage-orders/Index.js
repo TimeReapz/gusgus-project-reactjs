@@ -9,7 +9,6 @@ export default function Index() {
 
   useEffect(() => {
     const q = search;
-    console.log(search)
     const query = firebase
       .database()
       .ref("tbOrderSchedule")

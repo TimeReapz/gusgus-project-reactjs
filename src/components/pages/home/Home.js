@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import firebase from "../../../utils/firebase";
-import { SwalConfirm } from "../../../lib/script";
+import { SwalConfirm, SwalToast } from "../../../lib/script";
 import moment from "moment";
-
-const schedule = [
-  { value: "ทุกพระ 8", label: "ทุกพระ 8" },
-  { value: "ทกุพระ 15", label: "ทุกพระ 15" },
-  { value: "วันโกน", label: "วันโกน" },
-  { value: "วันพฤหัส", label: "วันพฤหัส" },
-  { value: "วันอาทิตย์", label: "วันอาทิตย์" },
-];
+import Select from "react-select";
 
 export default function Home() {
   const [dataTable, setDataTable] = useState([]);
   const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8");
+
+  const schedule = [
+    { value: "ทุกพระ 8", label: "ทุกพระ 8" },
+    { value: "ทกุพระ 15", label: "ทุกพระ 15" },
+    { value: "วันโกน", label: "วันโกน" },
+    { value: "วันพฤหัส", label: "วันพฤหัส" },
+    { value: "วันอาทิตย์", label: "วันอาทิตย์" },
+  ];
 
   useEffect(() => {
     const q = dataSchedule;
@@ -25,45 +26,30 @@ export default function Home() {
       .startAt(q)
       .endAt(q + "\uf8ff");
     // listen every time data change in todo ref
-    query.on("child_added", (osSnap) => {
-      const id = osSnap.key;
+    query.on("value", (osSnap) => {
+      var models = osSnap.val();
 
-      const tbOrder = firebase
-        .database()
-        .ref("tbOrder")
-        .orderByChild("tbOrderScheduleId")
-        .equalTo(id);
-      tbOrder.on("value", function (orderSnap) {
-        var orders = orderSnap.val();
-        var isDeliver = false;
-
-        for (let id in orders) {
-          var obj = orders[id];
-          var isSameDate =
-            moment(obj.create_date, "YYYY-MM-DD").format("YYYY-MM-DD") ===
-            moment().format("YYYY-MM-DD");
-          if (obj.orderTypeId === 1 && obj.isactive === 1 && isSameDate) {
-            isDeliver = true;
-            break;
-          }
+      const temp = [];
+      for (let id in models) {
+        var isSameDate =
+          moment(models[id].deliverTime, "YYYY-MM-DD").format("YYYY-MM-DD") ===
+          moment().format("YYYY-MM-DD");
+        if (!isSameDate) {
+          temp.push({ id, ...models[id] });
         }
-
-        setDataTable([]);
-        if (!isDeliver) {
-          let temp = {
-            id,
-            ...osSnap.val(),
-          };
-          setDataTable((prev) => [...prev, temp]);
-        }
-      });
+      }
+      setDataTable(temp);
     });
 
     return () => {
-      console.log(1)
+      console.log(1);
       setDataTable([]);
     };
   }, [dataSchedule]);
+
+  const onClickTest = () => {
+    SwalToast.fire();
+  };
 
   return (
     <div>
@@ -71,7 +57,7 @@ export default function Home() {
         <div className="container">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1>รายการ</h1>
+              <h1>รายการจัดส่ง</h1>
             </div>
           </div>
         </div>
@@ -80,39 +66,34 @@ export default function Home() {
       <section className="content">
         <div className="container">
           <div className="row">
-            <div className="col-12 text-center">
-              <div
-                className="btn-group btn-group-toggle flex-wrap"
-                data-toggle="buttons"
-              >
-                {schedule.map((item, index) => {
-                  return (
-                    <label
-                      className={
-                        "btn btn-info mb-1 " +
-                        (item.value === dataSchedule ? "active" : "")
-                      }
-                      key={index}
-                    >
-                      <input
-                        type="radio"
-                        name="options"
-                        autoComplete="off"
-                        onClick={() => setDataSchedule(item.value)}
-                      />
-                      {item.label}
-                    </label>
-                  );
-                })}
-              </div>
+            <div className="col-12">
+              <Select
+                options={schedule}
+                id="schedule"
+                onChange={(e) => {
+                  setDataSchedule(e.value);
+                }}
+                isSearchable={false}
+                value={schedule.filter(
+                  (options) => options.value === dataSchedule
+                )}
+              />
             </div>
           </div>
 
           <div className="row mt-4">
+            <div className="col-12 text-right">
+              <span className="text-sm">ทั้งหมด {dataTable.length} รายการ</span>
+            </div>
+          </div>
+
+          <div className="row mt-2">
             <div className="col-12">
-              {dataTable.map((item) => (
-                <OrderScheduleBox item={item} key={item.id} />
-              ))}
+              {dataTable.length > 0
+                ? dataTable.map((item) => (
+                    <OrderScheduleBox item={item} key={item.id} />
+                  ))
+                : "ไม่พบข้อมูล"}
             </div>
           </div>
         </div>
@@ -127,7 +108,8 @@ function OrderScheduleBox({ item }) {
       title: "ยืนยันการจัดส่ง",
     }).then((result) => {
       if (result.value) {
-        let model = {
+        // insert tbOrder
+        let modelOrder = {
           create_date: moment().format(),
           isactive: 1,
           orderTypeId: 1,
@@ -135,15 +117,23 @@ function OrderScheduleBox({ item }) {
           tbOrderScheduleId: item.id,
           tbOrderSchedule: item,
         };
-        const modelRef = firebase.database().ref("tbOrder");
-        modelRef.push(model);
+        const modelOrderRef = firebase.database().ref("tbOrder");
+        modelOrderRef.push(modelOrder);
+
+        // insert tbHistory
+        const modelOrderScheduleRef = firebase
+          .database()
+          .ref("tbOrderSchedule")
+          .child(item.id);
+        modelOrderScheduleRef.update({ deliverTime: moment().format() });
+        SwalToast.fire();
       }
     });
   };
   return (
     <div>
       <div className="card card-outline card-primary">
-        <div className="card-body">
+        <div className="card-body p-3">
           <div className="row">
             <div className="col-8 text-lg text-bold">{item.tbUser.name}</div>
           </div>
@@ -151,33 +141,17 @@ function OrderScheduleBox({ item }) {
             <div className="col-12">
               {item.orderScheduleItems.map((orderScheduleItem, index) => (
                 <div className="info-box" key={index}>
-                  <div
-                    className="position-relative d-inline-block"
-                    style={{
-                      width: "80px",
-                      height: "80px",
-                      cursor: "pointer",
-                    }}
-                  >
+                  <span className="info-box-icon">
                     <img
                       src={
                         orderScheduleItem.tbProduct.thumbnail &&
                         orderScheduleItem.tbProduct.thumbnail
                       }
-                      className="w-100 position-absolute"
-                      style={{
-                        left: "50%",
-                        top: "50%",
-                        transform: "translate(-50%, -50%)",
-                      }}
-                      alt=""
+                      alt={orderScheduleItem.tbProduct.name}
                     />
-                  </div>
+                  </span>
                   <div className="info-box-content">
-                    <span
-                      className="info-box-text text-md"
-                      style={{ width: "220px" }}
-                    >
+                    <span className="info-box-text text-md">
                       {orderScheduleItem.tbProduct.name +
                         (orderScheduleItem.tbProduct.subType !== ""
                           ? " (" + orderScheduleItem.tbProduct.subType + ")"

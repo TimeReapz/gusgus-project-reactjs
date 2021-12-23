@@ -23,18 +23,18 @@ export default function Create(props) {
   const history = useHistory();
 
   const initOrderSchedule = {
-    id: '',
-    userId: '',
-    schedule: '',
-    delivery: '',
-    remark: '',
+    id: "",
+    tbUser_ID: "",
+    schedule: "",
+    delivery: "",
+    remark: "",
     orderScheduleItems: [
       {
-        productId: '',
-        qty: '',
+        tbProduct_ID: "",
+        qty: "",
       },
     ],
-    totalPrice: 0
+    totalPrice: "",
   };
 
   const [orderSchedule, setOrderSchedule] = useState(initOrderSchedule);
@@ -51,7 +51,7 @@ export default function Create(props) {
 
       modelRef.on("value", (snapshot) => {
         const model = snapshot.val();
-        console.log(model)
+        console.log(model);
         setOrderSchedule({ ...model, id: props.match.params.id });
       });
     }
@@ -81,7 +81,10 @@ export default function Create(props) {
 
   useEffect(() => {
     // dropdown product
-    const productRef = firebase.database().ref("tbProduct").orderByChild("name");
+    const productRef = firebase
+      .database()
+      .ref("tbProduct")
+      .orderByChild("name");
 
     productRef.on("value", (snapshot) => {
       const models = snapshot.val();
@@ -133,10 +136,11 @@ export default function Create(props) {
     e.preventDefault();
     console.log(orderSchedule);
     if (orderSchedule.id !== "") {
+      // update
       console.log(orderSchedule.id);
 
       let model = {
-        userId: orderSchedule.userId,
+        tbUser_ID: orderSchedule.tbUser_ID,
         totalPrice: parseInt(orderSchedule.totalPrice),
         schedule: orderSchedule.schedule,
         delivery: orderSchedule.delivery,
@@ -146,14 +150,17 @@ export default function Create(props) {
       const userRef = firebase
         .database()
         .ref("tbUser")
-        .child(orderSchedule.userId);
-      userRef.once("value", (snap) => (model = { ...model, tbUser: snap.val() }));
+        .child(orderSchedule.tbUser_ID);
+      userRef.once(
+        "value",
+        (snap) => (model = { ...model, tbUser: snap.val() })
+      );
 
       orderSchedule.orderScheduleItems.forEach((item, index) => {
         const productRef = firebase
           .database()
           .ref("tbProduct")
-          .child(item.productId);
+          .child(item.tbProduct_ID);
         productRef.once(
           "value",
           (snap) =>
@@ -174,8 +181,9 @@ export default function Create(props) {
       modelRef.update(model);
       history.push("/manageorder-schedule");
     } else {
+      // create
       let model = {
-        userId: orderSchedule.userId,
+        tbUser_ID: orderSchedule.tbUser_ID,
         totalPrice: parseInt(orderSchedule.totalPrice),
         schedule: orderSchedule.schedule,
         delivery: orderSchedule.delivery,
@@ -186,14 +194,17 @@ export default function Create(props) {
       const userRef = firebase
         .database()
         .ref("tbUser")
-        .child(orderSchedule.userId);
-      userRef.once("value", (snap) => (model = { ...model, tbUser: snap.val() }));
+        .child(orderSchedule.tbUser_ID);
+      userRef.once(
+        "value",
+        (snap) => (model = { ...model, tbUser: snap.val() })
+      );
 
       orderSchedule.orderScheduleItems.forEach((item, index) => {
         const productRef = firebase
           .database()
           .ref("tbProduct")
-          .child(item.productId);
+          .child(item.tbProduct_ID);
         productRef.once(
           "value",
           (snap) =>
@@ -233,13 +244,12 @@ export default function Create(props) {
       // 5. Set the state to our new copy
       setOrderSchedule({ ...orderSchedule, orderScheduleItems });
     }
-    
   };
 
   const addEmptyOrderScheduleItem = () => {
     let orderScheduleItems = [...orderSchedule.orderScheduleItems];
     orderScheduleItems.push({
-      productId: "",
+      tbProduct_ID: "",
       qty: "",
     });
     setOrderSchedule({ ...orderSchedule, orderScheduleItems });
@@ -271,24 +281,25 @@ export default function Create(props) {
                   <form onSubmit={save}>
                     <div className="card-body">
                       <div className="form-group">
-                        <label htmlFor="userId">ชื่อลูกค้า</label>
+                        <label htmlFor="tbUser_ID">ชื่อลูกค้า</label>
                         <Select
                           options={userDropdown}
-                          id="userId"
+                          id="tbUser_ID"
                           value={userDropdown.filter(
-                            (options) => options.value === orderSchedule.userId
+                            (options) =>
+                              options.value === orderSchedule.tbUser_ID
                           )}
                           onChange={(e) => {
                             setOrderSchedule({
                               ...orderSchedule,
-                              userId: e.value,
+                              tbUser_ID: e.value,
                             });
                           }}
                           isSearchable={false}
                         />
                       </div>
                       <div className="form-group">
-                        <label htmlFor="userId">รายการสินค้า</label>
+                        <label htmlFor="tbUser_ID">รายการสินค้า</label>
                         {orderSchedule.orderScheduleItems.map((item, index) => {
                           return (
                             <OrderScheduleItemFunc
@@ -405,11 +416,11 @@ export default function Create(props) {
 
 function OrderScheduleItemFunc(props) {
   useEffect(() => {
-    setOrderScheduleItem(props.orderScheduleItem)
+    setOrderScheduleItem(props.orderScheduleItem);
   }, [props.orderScheduleItem]);
-  
+
   const initOrderScheduleItem = {
-    productId: "",
+    tbProduct_ID: "",
     qty: "",
   };
   const [orderScheduleItem, setOrderScheduleItem] = useState(
@@ -427,20 +438,21 @@ function OrderScheduleItemFunc(props) {
         <div className="col-8 mb-2 pr-0">
           <Select
             options={props.productDropdownGroup}
-            id="productId"
+            id="tbProduct_ID"
             onChange={(e) => {
               setOrderScheduleItem({
                 ...orderScheduleItem,
-                productId: e.value,
+                tbProduct_ID: e.value,
               });
               props.onOrderScheduleItemChange(props.index, {
                 ...orderScheduleItem,
-                productId: e.value,
+                tbProduct_ID: e.value,
               });
             }}
             isSearchable={false}
             value={props.productDropdown.filter(
-              (options) => options.value === props.orderScheduleItem.productId
+              (options) =>
+                options.value === props.orderScheduleItem.tbProduct_ID
             )}
           />
         </div>
@@ -465,12 +477,12 @@ function OrderScheduleItemFunc(props) {
           />
         </div>
         <div className="col-1 pl-0">
-          <button
+          <div
             className="btn btn-danger btn-block px-0"
             onClick={removeOrderItem}
           >
             X
-          </button>
+          </div>
         </div>
       </div>
     </div>
