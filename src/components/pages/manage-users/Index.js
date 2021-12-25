@@ -115,7 +115,7 @@ export default function Index() {
                   </div>
                   <div className="card-tools">
                     <Link
-                      to="/manageuser-create"
+                      to="/manageuser/create"
                       className="btn btn-warning float-right d-inline"
                     >
                       เพิ่ม
@@ -135,29 +135,29 @@ export default function Index() {
                     <tbody>
                       {dataTable
                         ? dataTable
-                        .sort((a, b) => a.name > b.name ? 1 : -1)
-                        .map((item) => (
-                            <tr key={item.id}>
-                              <td className="align-middle">{item.name}</td>
-                              <td>
-                                <Link
-                                  to={{
-                                    pathname: `manageuser-create/${item.id}`,
-                                  }}
-                                  className="btn btn-primary mr-2"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </Link>
-                                <button
-                                  type="button"
-                                  className="btn btn-danger"
-                                  onClick={() => delUser(item.id)}
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          ))
+                            .sort((a, b) => (a.name > b.name ? 1 : -1))
+                            .map((item) => (
+                              <tr key={item.id}>
+                                <td className="align-middle">{item.name}</td>
+                                <td>
+                                  <Link
+                                    to={{
+                                      pathname: `manageuser/${item.id}`,
+                                    }}
+                                    className="btn btn-primary mr-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                  <button
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={() => delUser(item.id)}
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
                         : ""}
                     </tbody>
                   </table>

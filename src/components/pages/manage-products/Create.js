@@ -21,7 +21,7 @@ export default function Create(props) {
     if (props.match.params.id) {
       const modelRef = firebase
         .database()
-        .ref("Product")
+        .ref("tbProduct")
         .child(props.match.params.id);
 
       modelRef.on("value", (snapshot) => {
@@ -30,7 +30,6 @@ export default function Create(props) {
         setProduct({ ...model, id: props.match.params.id });
       });
     }
-
   }, [props.match.params.id]);
 
   const saveProduct = (e) => {

@@ -14,9 +14,8 @@ export default function Create(props) {
       setId(props.match.params.id);
       const modelRef = firebase
         .database()
-        .ref("User")
+        .ref("tbUser")
         .child(props.match.params.id);
-
       modelRef.on("value", (snapshot) => {
         const model = snapshot.val();
         console.log(model);
@@ -31,11 +30,11 @@ export default function Create(props) {
 
   const saveUser = (e) => {
     e.preventDefault();
-    if (id !== '') {
+    if (id !== "") {
       const modelRef = firebase.database().ref("tbUser").child(id);
       modelRef.update({
         name: name,
-        update_date: moment().format()
+        update_date: moment().format(),
       });
       history.push("/manageuser");
     } else {

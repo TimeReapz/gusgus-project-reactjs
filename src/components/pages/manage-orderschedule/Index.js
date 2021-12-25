@@ -116,7 +116,7 @@ export default function Index() {
                   </div>
                   <div className="card-tools">
                     <Link
-                      to="/manageorder-schedule-create"
+                      to="/manageorder-schedule/create"
                       className="btn btn-warning float-right d-inline"
                     >
                       เพิ่ม
@@ -153,7 +153,7 @@ export default function Index() {
                                 <td className="align-middle">
                                   <Link
                                     to={{
-                                      pathname: `manageorder-schedule-create/${item.id}`,
+                                      pathname: `manageorder-schedule/${item.id}`,
                                     }}
                                     className="btn btn-primary mr-2"
                                   >

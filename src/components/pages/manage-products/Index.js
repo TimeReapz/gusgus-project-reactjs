@@ -19,7 +19,7 @@ export default function Index() {
     // listen every time data change in todo ref
     query.on("value", (snapshot) => {
       const models = snapshot.val();
-      console.log(models)
+      console.log(models);
       const temp = [];
       for (let id in models) {
         temp.push({ id, ...models[id] });
@@ -116,7 +116,7 @@ export default function Index() {
                   </div>
                   <div className="card-tools">
                     <Link
-                      to="/manageproduct-create"
+                      to="/manageproduct/create"
                       className="btn btn-warning float-right d-inline"
                     >
                       เพิ่ม
@@ -170,7 +170,7 @@ export default function Index() {
                                 <td className="align-middle">
                                   <Link
                                     to={{
-                                      pathname: `manageproduct-create/${item.id}`,
+                                      pathname: `manageproduct/${item.id}`,
                                     }}
                                     className="btn btn-primary mr-2"
                                   >
