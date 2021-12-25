@@ -47,10 +47,6 @@ export default function Home() {
     };
   }, [dataSchedule]);
 
-  const onClickTest = () => {
-    SwalToast.fire();
-  };
-
   return (
     <div>
       <section className="content-header">
