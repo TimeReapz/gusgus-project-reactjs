@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import firebase from "../../../utils/firebase";
+import { firebase } from "../../../utils/firebase";
 import { useHistory } from "react-router-dom";
 
 export default function Create(props) {

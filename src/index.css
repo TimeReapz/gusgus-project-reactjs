@@ -3,3 +3,9 @@ body {
   padding: 0;
   font-family: "Quicksand", sans-serif;
 }
+
+p.MuiTablePagination-selectLabel,
+p.MuiTablePagination-displayedRows {
+  margin-top: 12px !important;
+  margin-bottom: 14px !important;
+}

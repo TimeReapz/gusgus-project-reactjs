@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import firebase from "../../../utils/firebase";
+import { firebase } from "../../../utils/firebase";
 import { SwalConfirm, SwalToast } from "../../../lib/script";
 import moment from "moment";
 import Select from "react-select";
@@ -10,7 +10,7 @@ export default function Home() {
 
   const schedule = [
     { value: "ทุกพระ 8", label: "ทุกพระ 8" },
-    { value: "ทกุพระ 15", label: "ทุกพระ 15" },
+    { value: "ทุกพระ 15", label: "ทุกพระ 15" },
     { value: "วันโกน", label: "วันโกน" },
     { value: "วันพฤหัส", label: "วันพฤหัส" },
     { value: "วันอาทิตย์", label: "วันอาทิตย์" },
@@ -139,10 +139,7 @@ function OrderScheduleBox({ item }) {
                 <div className="info-box" key={index}>
                   <span className="info-box-icon">
                     <img
-                      src={
-                        orderScheduleItem.tbProduct.thumbnail &&
-                        orderScheduleItem.tbProduct.thumbnail
-                      }
+                      src={orderScheduleItem.tbProduct.thumbnail}
                       alt={orderScheduleItem.tbProduct.name}
                     />
                   </span>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SwalConfirm } from "../../../lib/script";
 import { Link } from "react-router-dom";
-import firebase from "../../../utils/firebase";
+import { firebase } from  "../../../utils/firebase";
 
 export default function Index() {
   const [dataTable, setdataTable] = useState([]);
@@ -9,6 +9,7 @@ export default function Index() {
 
   useEffect(() => {
     const q = search;
+
     const query = firebase
       .database()
       .ref("tbOrderSchedule")
@@ -138,7 +139,12 @@ export default function Index() {
                     <tbody>
                       {dataTable
                         ? dataTable
-                            .sort((a, b) => (a.name > b.name ? 1 : -1))
+                            .sort((a, b) =>
+                              a.tbUser.name + a.schedule >
+                              b.tbUser.name + b.schedule
+                                ? 1
+                                : -1
+                            )
                             .map((item) => (
                               <tr key={item.id}>
                                 <td className="align-middle">

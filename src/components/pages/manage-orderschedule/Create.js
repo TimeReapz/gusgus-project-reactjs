@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import firebase from "../../../utils/firebase";
+import { firebase } from "../../../utils/firebase";
 import { useHistory } from "react-router-dom";
 import Select from "react-select";
 
 const schedule = [
   { value: "ทุกพระ 8,15", label: "ทุกพระ 8,15" },
   { value: "ทุกพระ 8", label: "ทุกพระ 8" },
-  { value: "ทกุพระ 15", label: "ทุกพระ 15" },
+  { value: "ทุกพระ 15", label: "ทุกพระ 15" },
   { value: "วันโกน", label: "วันโกน" },
   { value: "วันพฤหัส", label: "วันพฤหัส" },
   { value: "วันอาทิตย์", label: "วันอาทิตย์" },

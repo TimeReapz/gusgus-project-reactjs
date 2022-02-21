@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { AuthContext } from "./Auth";
-import firebase from "../../../utils/firebase";
+import { firebase } from "../../../utils/firebase";
 
 const LogIn = () => {
   const handleSubmit = (e) => {
@@ -37,9 +37,6 @@ const LogIn = () => {
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
             />
-            <div id="emailHelp" className="form-text">
-              We'll never share your email with anyone else.
-            </div>
           </div>
           <div className="mb-3">
             <label for="exampleInputPassword1" className="form-label">

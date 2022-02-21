@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
-import firebase from "../../../utils/firebase";
-import { useHistory } from "react-router-dom";
+import { firebase, db } from "../../../utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 
 export default function Create(props) {
   const history = useHistory();
+  const [isLoaded, setIsLoaded] = useState(false);
   const initProduct = {
     id: "",
     name: "",
@@ -17,55 +17,49 @@ export default function Create(props) {
 
   const [product, setProduct] = useState(initProduct);
 
+  const tbProducts = db.collection("tbProducts");
+
   useEffect(() => {
     if (props.match.params.id) {
-      const modelRef = firebase
-        .database()
-        .ref("tbProduct")
-        .child(props.match.params.id);
-
-      modelRef.on("value", (snapshot) => {
-        const model = snapshot.val();
-        console.log(model);
-        setProduct({ ...model, id: props.match.params.id });
-      });
+      tbProducts
+        .doc(props.match.params.id)
+        .get()
+        .then((snapshot) => {
+          setProduct({ ...snapshot.data(), id: props.match.params.id });
+        });
     }
   }, [props.match.params.id]);
 
   const saveProduct = (e) => {
-    console.log("submit");
     e.preventDefault();
     if (product.id !== "") {
-      console.log(product.id);
-      const modelRef = firebase.database().ref("tbProduct").child(product.id);
       const model = {
         name: product.name,
         subType: product.subType,
         price: parseInt(product.price),
         thumbnail: product.thumbnail,
-        update_date: moment().format(),
+        updateDate: moment().format(),
       };
 
-      modelRef.update(model);
+      tbProducts.doc(product.id).update(model);
       history.push("/manageproduct");
     } else {
-      const modelRef = firebase.database().ref("tbProduct");
       const model = {
         name: product.name,
         subType: product.subType,
         price: parseInt(product.price),
         thumbnail: product.thumbnail,
-        create_date: moment().format(),
+        createDate: moment().format(),
         isactive: 1,
       };
 
-      modelRef.push(model);
+      tbProducts.add(model);
       history.push("/manageproduct");
     }
   };
 
   return (
-    <div>
+    <>
       <section className="content-header">
         <div className="container">
           <div className="row mb-2">
@@ -135,6 +129,7 @@ export default function Create(props) {
                       <div className="form-group">
                         <label htmlFor="image">รูปสินค้า</label>
                         <UploadPreview
+                          setIsLoaded={setIsLoaded}
                           thumbnail={product.thumbnail}
                           onthumbnailChange={(value) => {
                             setProduct({ ...product, thumbnail: value });
@@ -147,8 +142,12 @@ export default function Create(props) {
                         Back
                       </Link>
                       <div className="float-right">
-                        <button type="submit" className="btn btn-primary">
-                          Submit
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          disabled={isLoaded ? "disabled" : ""}
+                        >
+                          {isLoaded ? " • • • " : "Submit"}
                         </button>
                       </div>
                     </div>
@@ -159,39 +158,44 @@ export default function Create(props) {
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 }
 
 function UploadPreview(props) {
-  const onChange = (e) => {
+  const handleChage = (e) => {
     //upload
+
     const file = e.target.files[0];
-    const storageRef = firebase.storage().ref(`images/`);
-    const fileRef = storageRef.child(
-      uuidv4() + "." + file.name.split(".").pop()
-    );
-    fileRef.put(file).then((e) => {
-      fileRef.getDownloadURL().then((url) => {
-        props.onthumbnailChange(url);
+    if (file !== undefined) {
+      props.setIsLoaded(true);
+      const storageRef = firebase.storage().ref(`images/`);
+      const fileRef = storageRef.child(
+        uuidv4() + "." + file.name.split(".").pop()
+      );
+      fileRef.put(file).then(() => {
+        fileRef.getDownloadURL().then((url) => {
+          props.onthumbnailChange(url);
+          props.setIsLoaded(false);
+        });
       });
-    });
+    }
   };
 
   return (
-    <div>
+    <>
       <div
         className="text-center position-relative"
         style={{
-          width: "100px",
-          height: "100px",
+          width: "150px",
+          height: "150px",
           border: "1px dashed rgb(182 186 189)",
           cursor: "pointer",
         }}
       >
         <input
           type="file"
-          onChange={onChange}
+          onChange={handleChage}
           className="custom-file-input h-100"
         />
         {props.thumbnail && (
@@ -205,7 +209,7 @@ function UploadPreview(props) {
               background: "transparent",
               zIndex: 3,
             }}
-            onClick={(e) => {
+            onMouseDown={(e) => {
               props.onthumbnailChange("");
             }}
           >
@@ -219,6 +223,7 @@ function UploadPreview(props) {
             left: "50%",
             top: "50%",
             transform: "translate(-50%, -50%)",
+            height: "100%",
           }}
           alt=""
         />
@@ -233,6 +238,6 @@ function UploadPreview(props) {
           ></i>
         )}
       </div>
-    </div>
+    </>
   );
 }
