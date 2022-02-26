@@ -1,8 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
-import { firebase } from "../../../utils/firebase";
-import { useHistory } from "react-router-dom";
+import { db } from "../../../utils/firebase";
 import Select from "react-select";
 
 const schedule = [
@@ -42,94 +42,67 @@ export default function Create(props) {
   const [productDropdownGroup, setProductDropdownGroup] = useState([]);
   const [productDropdown, setProductDropdown] = useState([]);
 
-  useEffect(() => {
-    if (props.match.params.id) {
-      const modelRef = firebase
-        .database()
-        .ref("tbOrderSchedule")
-        .child(props.match.params.id);
+  const tbOrderSchedules = db.collection("tbOrderSchedules");
+  const tbProducts = db.collection("tbProducts");
+  const tbUsers = db.collection("tbUsers");
 
-      modelRef.on("value", (snapshot) => {
-        const model = snapshot.val();
-        console.log(model);
-        setOrderSchedule({ ...model, id: props.match.params.id });
-      });
+  useEffect(() => {
+    async function getDropDownUsers() {
+      const snapshot = await tbUsers.orderBy("name").get();
+
+      setUserDropdown(
+        snapshot.docs.map((doc) => ({
+          value: doc.id,
+          label: doc.data().name,
+        }))
+      );
+    }
+
+    async function getDropDownProducts() {
+      const snapshot = await tbProducts.orderBy("name").get();
+
+      const productList = snapshot.docs.map((doc) => ({
+        value: doc.id,
+        label:
+          doc.data().name +
+          (doc.data().subType !== "" ? "(" + doc.data().subType + ")" : "") +
+          " " +
+          doc.data().price +
+          "฿",
+        price: doc.data().price,
+        nameGroup: doc.data().name,
+      }));
+      setProductDropdown(productList);
+
+      const nameGroupArr = productList.map((x) => x.nameGroup);
+      const unique = [...new Set(nameGroupArr)];
+      console.log(productList);
+      const productGroup = unique
+        .sort((a, b) => a - b)
+        .map((doc) => ({
+          label: doc,
+          options: productList.filter((x) => x.nameGroup === doc),
+        }));
+      console.log(productGroup);
+      setProductDropdownGroup(productGroup);
+    }
+
+    getDropDownUsers();
+    getDropDownProducts();
+
+    if (props.match.params.id) {
+      tbOrderSchedules
+        .doc(props.match.params.id)
+        .get()
+        .then((snapshot) => {
+          setOrderSchedule({ ...snapshot.data(), id: props.match.params.id });
+        });
     }
 
     return () => {
       setOrderSchedule({}); // Clean up
     };
   }, [props.match.params.id]);
-
-  useEffect(() => {
-    // dropdown user
-    const userRef = firebase.database().ref("tbUser").orderByChild("name");
-
-    userRef.on("value", (snapshot) => {
-      const models = snapshot.val();
-      const temp = [];
-      for (let id in models) {
-        var obj = {
-          value: id,
-          label: models[id].name,
-        };
-        temp.push(obj);
-      }
-      setUserDropdown(temp);
-    });
-  }, []);
-
-  useEffect(() => {
-    // dropdown product
-    const productRef = firebase
-      .database()
-      .ref("tbProduct")
-      .orderByChild("name");
-
-    productRef.on("value", (snapshot) => {
-      const models = snapshot.val();
-      const temp = [];
-      for (let id in models) {
-        var obj = {
-          id: id,
-          ...models[id],
-        };
-        temp.push(obj);
-      }
-
-      var tempArrGroup = [];
-      var tempArr = [];
-      temp
-        .sort((a, b) => a.name - b.name)
-        .forEach((item) => {
-          var obj = {
-            value: item.id,
-            price: item.price,
-            label:
-              item.name +
-              (item.subType !== "" ? "(" + item.subType + ")" : "") +
-              " " +
-              item.price +
-              "฿",
-          };
-
-          var temp = tempArrGroup.find((x) => x.label === item.name);
-          if (temp) {
-            temp.options.push(obj);
-          } else {
-            tempArrGroup.push({
-              label: item.name,
-              options: [obj],
-            });
-          }
-
-          tempArr.push(obj);
-        });
-
-      setProductDropdownGroup(tempArrGroup);
-      setProductDropdown(tempArr);
-    });
-  }, []);
 
   const save = (e) => {
     console.log("submit");
@@ -147,25 +120,17 @@ export default function Create(props) {
         remark: orderSchedule.remark,
         update_date: moment().format(),
       };
-      const userRef = firebase
-        .database()
-        .ref("tbUser")
-        .child(orderSchedule.tbUser_ID);
-      userRef.once(
-        "value",
-        (snap) => (model = { ...model, tbUser: snap.val() })
-      );
+      const userRef = tbUsers.doc(orderSchedule.tbUser_ID);
+      userRef.get().then((snap) => (model = { ...model, tbUser: snap.data() }));
 
       orderSchedule.orderScheduleItems.forEach((item, index) => {
-        const productRef = firebase
-          .database()
-          .ref("tbProduct")
-          .child(item.tbProduct_ID);
-        productRef.once(
-          "value",
-          (snap) =>
-            (orderSchedule.orderScheduleItems[index].tbProduct = snap.val())
-        );
+        const productRef = tbProducts.doc(item.tbProduct_ID);
+        productRef
+          .get()
+          .then(
+            (snap) =>
+              (orderSchedule.orderScheduleItems[index].tbProduct = snap.data())
+          );
         console.log(orderSchedule.orderScheduleItems);
       });
       console.log(orderSchedule.orderScheduleItems);
@@ -174,10 +139,7 @@ export default function Create(props) {
         orderScheduleItems: orderSchedule.orderScheduleItems,
       };
 
-      const modelRef = firebase
-        .database()
-        .ref("tbOrderSchedule")
-        .child(orderSchedule.id);
+      const modelRef = tbOrderSchedules.doc(orderSchedule.id);
       modelRef.update(model);
       history.push("/manageorder-schedule");
     } else {
@@ -191,35 +153,26 @@ export default function Create(props) {
         create_date: moment().format(),
         isactive: 1,
       };
-      const userRef = firebase
-        .database()
-        .ref("tbUser")
-        .child(orderSchedule.tbUser_ID);
-      userRef.once(
-        "value",
-        (snap) => (model = { ...model, tbUser: snap.val() })
-      );
+      const userRef = tbUsers.doc(orderSchedule.tbUser_ID);
+      userRef.get().then((doc) => (model = { ...model, tbUser: doc.data() }));
 
       orderSchedule.orderScheduleItems.forEach((item, index) => {
-        const productRef = firebase
-          .database()
-          .ref("tbProduct")
-          .child(item.tbProduct_ID);
-        productRef.once(
-          "value",
-          (snap) =>
-            (orderSchedule.orderScheduleItems[index].tbProduct = snap.val())
-        );
-        console.log(orderSchedule.orderScheduleItems);
+        const productRef = tbProducts.doc(item.tbProduct_ID);
+        productRef
+          .get()
+          .then(
+            (snap) =>
+              (orderSchedule.orderScheduleItems[index].tbProduct = snap.data())
+          );
       });
-      console.log(orderSchedule.orderScheduleItems);
       model = {
         ...model,
         orderScheduleItems: orderSchedule.orderScheduleItems,
       };
 
-      const modelRef = firebase.database().ref("tbOrderSchedule");
-      modelRef.push(model);
+      console.log(model);
+      const modelRef = tbOrderSchedules;
+      modelRef.add(model);
       history.push("/manageorder-schedule");
     }
   };

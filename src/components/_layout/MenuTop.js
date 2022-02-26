@@ -2,10 +2,6 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
 export default function MenuTop() {
-  const onClickMenu = () => {
-    
-  };
-
   return (
     <div>
       <nav className="main-header navbar navbar-expand-md navbar-light navbar-white">

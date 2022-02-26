@@ -6,6 +6,7 @@ import { TablePagination } from "@mui/material";
 
 export default function MyDataTable({
   tableName,
+  orderBy = "name",
   headerList,
   bodyList,
   actionLinkCreate = "",
@@ -19,13 +20,13 @@ export default function MyDataTable({
   const [pageKeyMap, setPageKeyMap] = React.useState(new Map());
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const tbQuery = db.collection(tableName);
+  const tbQuery = db.collection(tableName).orderBy(orderBy);
 
   React.useEffect(() => {
     console.log("init");
     pageKeyMap.set(0, "");
     async function paginatedCount() {
-      const query = tbQuery.orderBy("name");
+      const query = tbQuery;
 
       let lastDoc = {};
       let count = 0;
@@ -68,7 +69,6 @@ export default function MyDataTable({
     console.log("searchProduct");
     var q = search;
     tbQuery
-      .orderBy("name")
       .startAt(q)
       .endAt(q + "\uf8ff")
       .get()
@@ -100,7 +100,6 @@ export default function MyDataTable({
   const handleChangePage = (e, page) => {
     const key = pageKeyMap.get(page);
     tbQuery
-      .orderBy("name")
       .startAfter(key)
       .limit(rowsPerPage)
       .get()

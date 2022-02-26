@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
-import { firebase, db } from "../../../utils/firebase";
-import { v4 as uuidv4 } from "uuid";
+import { db } from "../../../utils/firebase";
+
+import MyUploadImage from "../../genaral/MyUploadImage-v1";
 
 export default function Create(props) {
   const history = useHistory();
@@ -28,7 +29,8 @@ export default function Create(props) {
           setProduct({ ...snapshot.data(), id: props.match.params.id });
         });
     }
-  }, [props.match.params.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const saveProduct = (e) => {
     e.preventDefault();
@@ -128,10 +130,10 @@ export default function Create(props) {
                       </div>
                       <div className="form-group">
                         <label htmlFor="image">รูปสินค้า</label>
-                        <UploadPreview
-                          setIsLoaded={setIsLoaded}
+                        <MyUploadImage
                           thumbnail={product.thumbnail}
-                          onthumbnailChange={(value) => {
+                          setIsLoaded={setIsLoaded}
+                          onThumbnailChange={(value) => {
                             setProduct({ ...product, thumbnail: value });
                           }}
                         />
@@ -158,86 +160,6 @@ export default function Create(props) {
           </div>
         </div>
       </section>
-    </>
-  );
-}
-
-function UploadPreview(props) {
-  const handleChage = (e) => {
-    //upload
-
-    const file = e.target.files[0];
-    if (file !== undefined) {
-      props.setIsLoaded(true);
-      const storageRef = firebase.storage().ref(`images/`);
-      const fileRef = storageRef.child(
-        uuidv4() + "." + file.name.split(".").pop()
-      );
-      fileRef.put(file).then(() => {
-        fileRef.getDownloadURL().then((url) => {
-          props.onthumbnailChange(url);
-          props.setIsLoaded(false);
-        });
-      });
-    }
-  };
-
-  return (
-    <>
-      <div
-        className="text-center position-relative"
-        style={{
-          width: "150px",
-          height: "150px",
-          border: "1px dashed rgb(182 186 189)",
-          cursor: "pointer",
-        }}
-      >
-        <input
-          type="file"
-          onChange={handleChage}
-          className="custom-file-input h-100"
-        />
-        {props.thumbnail && (
-          <button
-            style={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              width: 20,
-              border: 0,
-              background: "transparent",
-              zIndex: 3,
-            }}
-            onMouseDown={(e) => {
-              props.onthumbnailChange("");
-            }}
-          >
-            X
-          </button>
-        )}
-        <img
-          src={props.thumbnail}
-          className="w-100 position-absolute"
-          style={{
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            height: "100%",
-          }}
-          alt=""
-        />
-        {!props.thumbnail && (
-          <i
-            className="fas fa-plus position-absolute"
-            style={{
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          ></i>
-        )}
-      </div>
     </>
   );
 }
