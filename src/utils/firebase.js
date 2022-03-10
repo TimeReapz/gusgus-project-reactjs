@@ -1,7 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/firestore";
-import "firebase/database"; // If using Firebase database
 import "firebase/storage";
 import "firebase/auth";
 

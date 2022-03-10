@@ -23,14 +23,14 @@ export default function Create(props) {
   const history = useHistory();
 
   const initOrderSchedule = {
-    id: "",
-    tbUser_ID: "",
+    users_id: "",
+    users_name: "",
     schedule: "",
     delivery: "",
     remark: "",
     orderScheduleItems: [
       {
-        tbProduct_ID: "",
+        products_id: "",
         qty: "",
       },
     ],
@@ -71,6 +71,12 @@ export default function Create(props) {
           "฿",
         price: doc.data().price,
         nameGroup: doc.data().name,
+        products: {
+          products_name: doc.data().name,
+          products_price: doc.data().price,
+          products_subType: doc.data().subType,
+          products_thumbnail: doc.data().thumbnail,
+        },
       }));
       setProductDropdown(productList);
 
@@ -104,81 +110,31 @@ export default function Create(props) {
     };
   }, [props.match.params.id]);
 
-  const save = (e) => {
+  const save = async (e) => {
     console.log("submit");
     e.preventDefault();
     console.log(orderSchedule);
     if (orderSchedule.id !== "") {
       // update
-      console.log(orderSchedule.id);
 
-      let model = {
-        tbUser_ID: orderSchedule.tbUser_ID,
-        totalPrice: parseInt(orderSchedule.totalPrice),
-        schedule: orderSchedule.schedule,
-        delivery: orderSchedule.delivery,
-        remark: orderSchedule.remark,
-        update_date: moment().format(),
-      };
-      const userRef = tbUsers.doc(orderSchedule.tbUser_ID);
-      userRef.get().then((snap) => (model = { ...model, tbUser: snap.data() }));
-
-      orderSchedule.orderScheduleItems.forEach((item, index) => {
-        const productRef = tbProducts.doc(item.tbProduct_ID);
-        productRef
-          .get()
-          .then(
-            (snap) =>
-              (orderSchedule.orderScheduleItems[index].tbProduct = snap.data())
-          );
-        console.log(orderSchedule.orderScheduleItems);
-      });
-      console.log(orderSchedule.orderScheduleItems);
-      model = {
-        ...model,
-        orderScheduleItems: orderSchedule.orderScheduleItems,
-      };
-
-      const modelRef = tbOrderSchedules.doc(orderSchedule.id);
-      modelRef.update(model);
+      const ref = tbOrderSchedules.doc(orderSchedule.id);
+      ref.set(
+        { ...orderSchedule, updateDate: moment().format() },
+        { merge: true }
+      );
       history.push("/manageorder-schedule");
     } else {
       // create
-      let model = {
-        tbUser_ID: orderSchedule.tbUser_ID,
-        totalPrice: parseInt(orderSchedule.totalPrice),
-        schedule: orderSchedule.schedule,
-        delivery: orderSchedule.delivery,
-        remark: orderSchedule.remark,
-        create_date: moment().format(),
-        isactive: 1,
-      };
-      const userRef = tbUsers.doc(orderSchedule.tbUser_ID);
-      userRef.get().then((doc) => (model = { ...model, tbUser: doc.data() }));
+      const ref = tbOrderSchedules.doc();
+      ref.set(orderSchedule, { merge: true });
 
-      orderSchedule.orderScheduleItems.forEach((item, index) => {
-        const productRef = tbProducts.doc(item.tbProduct_ID);
-        productRef
-          .get()
-          .then(
-            (snap) =>
-              (orderSchedule.orderScheduleItems[index].tbProduct = snap.data())
-          );
-      });
-      model = {
-        ...model,
-        orderScheduleItems: orderSchedule.orderScheduleItems,
-      };
-
-      console.log(model);
-      const modelRef = tbOrderSchedules;
-      modelRef.add(model);
       history.push("/manageorder-schedule");
     }
   };
 
   const handleOrderScheduleItemChange = (index, orderScheduleItem) => {
     if (Object.keys(orderScheduleItem).length === 0) {
+      // delete item
       let orderScheduleItems = [...orderSchedule.orderScheduleItems];
       orderScheduleItems.splice(index, 1);
       setOrderSchedule({
@@ -202,7 +158,7 @@ export default function Create(props) {
   const addEmptyOrderScheduleItem = () => {
     let orderScheduleItems = [...orderSchedule.orderScheduleItems];
     orderScheduleItems.push({
-      tbProduct_ID: "",
+      products_id: "",
       qty: "",
     });
     setOrderSchedule({ ...orderSchedule, orderScheduleItems });
@@ -234,25 +190,26 @@ export default function Create(props) {
                   <form onSubmit={save}>
                     <div className="card-body">
                       <div className="form-group">
-                        <label htmlFor="tbUser_ID">ชื่อลูกค้า</label>
+                        <label htmlFor="users_id">ชื่อลูกค้า</label>
                         <Select
                           options={userDropdown}
-                          id="tbUser_ID"
+                          id="users_id"
                           value={userDropdown.filter(
                             (options) =>
-                              options.value === orderSchedule.tbUser_ID
+                              options.value === orderSchedule.users_id
                           )}
                           onChange={(e) => {
                             setOrderSchedule({
                               ...orderSchedule,
-                              tbUser_ID: e.value,
+                              users_id: e.value,
+                              users_name: e.label,
                             });
                           }}
                           isSearchable={false}
                         />
                       </div>
                       <div className="form-group">
-                        <label htmlFor="tbUser_ID">รายการสินค้า</label>
+                        <label htmlFor="users_id">รายการสินค้า</label>
                         {orderSchedule.orderScheduleItems.map((item, index) => {
                           return (
                             <OrderScheduleItemFunc
@@ -373,7 +330,7 @@ function OrderScheduleItemFunc(props) {
   }, [props.orderScheduleItem]);
 
   const initOrderScheduleItem = {
-    tbProduct_ID: "",
+    products_id: "",
     qty: "",
   };
   const [orderScheduleItem, setOrderScheduleItem] = useState(
@@ -391,21 +348,22 @@ function OrderScheduleItemFunc(props) {
         <div className="col-8 mb-2 pr-0">
           <Select
             options={props.productDropdownGroup}
-            id="tbProduct_ID"
+            id="products_id"
             onChange={(e) => {
               setOrderScheduleItem({
                 ...orderScheduleItem,
-                tbProduct_ID: e.value,
+                products_id: e.value,
               });
               props.onOrderScheduleItemChange(props.index, {
                 ...orderScheduleItem,
-                tbProduct_ID: e.value,
+                products_id: e.value,
+                ...props.productDropdown.filter((x) => x.value === e.value)[0]
+                  .products,
               });
             }}
             isSearchable={false}
             value={props.productDropdown.filter(
-              (options) =>
-                options.value === props.orderScheduleItem.tbProduct_ID
+              (options) => options.value === props.orderScheduleItem.products_id
             )}
           />
         </div>

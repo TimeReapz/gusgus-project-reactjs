@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { firebase } from "../../../utils/firebase";
+import { db } from "../../../utils/firebase";
 import { SwalConfirm, SwalToast } from "../../../lib/script";
 import moment from "moment";
 import Select from "react-select";
@@ -16,35 +16,36 @@ export default function Home() {
     { value: "วันอาทิตย์", label: "วันอาทิตย์" },
   ];
 
+  const tbOrderSchedules = db.collection("tbOrderSchedules");
+
   useEffect(() => {
     const q = dataSchedule;
+    async function getInit() {
+      const query = await tbOrderSchedules.orderBy("schedule").startAt(q).get();
+      // listen every time data change in todo ref
+      setDataTable(
+        query.docs.map((doc) => {
+          var models = doc.data();
 
-    const query = firebase
-      .database()
-      .ref("tbOrderSchedule")
-      .orderByChild("schedule")
-      .startAt(q)
-      .endAt(q + "\uf8ff");
-    // listen every time data change in todo ref
-    query.on("value", (osSnap) => {
-      var models = osSnap.val();
-
-      const temp = [];
-      for (let id in models) {
-        var isSameDate =
-          moment(models[id].deliverTime, "YYYY-MM-DD").format("YYYY-MM-DD") ===
-          moment().format("YYYY-MM-DD");
-        if (!isSameDate) {
-          temp.push({ id, ...models[id] });
-        }
-      }
-      setDataTable(temp);
-    });
-
+          // const temp = [];
+          // for (let id in models) {
+          //   var isSameDate =
+          //     moment(models[id].deliverTime, "YYYY-MM-DD").format(
+          //       "YYYY-MM-DD"
+          //     ) === moment().format("YYYY-MM-DD");
+          //   if (!isSameDate) {
+          //     temp.push({ id, ...models[id] });
+          //   }
+          // }
+          return { ...models, id: doc.id };
+        })
+      );
+    }
+    getInit();
     return () => {
-      console.log(1);
       setDataTable([]);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSchedule]);
 
   return (
@@ -99,6 +100,9 @@ export default function Home() {
 }
 
 function OrderScheduleBox({ item }) {
+  const tbOrders = db.collection("tbOrders");
+  const tbOrderSchedules = db.collection("tbOrderSchedules");
+
   const deliver = () => {
     SwalConfirm.fire({
       title: "ยืนยันการจัดส่ง",
@@ -113,14 +117,11 @@ function OrderScheduleBox({ item }) {
           tbOrderScheduleId: item.id,
           tbOrderSchedule: item,
         };
-        const modelOrderRef = firebase.database().ref("tbOrder");
-        modelOrderRef.push(modelOrder);
+        const modelOrderRef = tbOrders.doc();
+        modelOrderRef.set(modelOrder, { merge: true });
 
         // insert tbHistory
-        const modelOrderScheduleRef = firebase
-          .database()
-          .ref("tbOrderSchedule")
-          .child(item.id);
+        const modelOrderScheduleRef = tbOrderSchedules.doc(item.id);
         modelOrderScheduleRef.update({ deliverTime: moment().format() });
         SwalToast.fire();
       }
@@ -131,7 +132,10 @@ function OrderScheduleBox({ item }) {
       <div className="card card-outline card-primary">
         <div className="card-body p-3">
           <div className="row">
-            <div className="col-8 text-lg text-bold">{item.tbUser.name}</div>
+            <div className="col-8 text-lg text-bold">
+              {console.log(item)}
+              {item.users_name}
+            </div>
           </div>
           <div className="row mt-3">
             <div className="col-12">
@@ -139,19 +143,19 @@ function OrderScheduleBox({ item }) {
                 <div className="info-box" key={index}>
                   <span className="info-box-icon">
                     <img
-                      src={orderScheduleItem.tbProduct.thumbnail}
-                      alt={orderScheduleItem.tbProduct.name}
+                      src={orderScheduleItem.products_thumbnail}
+                      alt={orderScheduleItem.products_name}
                     />
                   </span>
                   <div className="info-box-content">
                     <span className="info-box-text text-md">
-                      {orderScheduleItem.tbProduct.name +
-                        (orderScheduleItem.tbProduct.subType !== ""
-                          ? " (" + orderScheduleItem.tbProduct.subType + ")"
+                      {orderScheduleItem.products_name +
+                        (orderScheduleItem.products_subType !== ""
+                          ? " (" + orderScheduleItem.products_subType + ")"
                           : "")}
                     </span>
                     <span className="info-box-number">
-                      {orderScheduleItem.tbProduct.price} ฿
+                      {orderScheduleItem.products_price} ฿
                     </span>
                   </div>
                   <div className="info-box-content">

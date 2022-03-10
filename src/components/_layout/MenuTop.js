@@ -35,6 +35,15 @@ export default function MenuTop() {
               </li>
               <li className="nav-item">
                 <NavLink
+                  to="/manageorder-schedule/my-order"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  จัดส่ง
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
                   to="/manageorder-schedule"
                   className="nav-link"
                   activeClassName="active"

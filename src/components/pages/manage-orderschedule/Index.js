@@ -16,9 +16,9 @@ export default function Index() {
 
       <MyDataTable
         tableName="tbOrderSchedules"
-        orderBy="tbUser_ID"
+        orderBy="users_name"
         headerList={["ชื่อลูกค้า", "วันที่จัดส่ง", "วิธีการจัดส่ง", "ราคา"]}
-        bodyList={["tbUser_ID", "schedule", "delivery", "totalPrice"]}
+        bodyList={["users_name", "schedule", "delivery", "totalPrice"]}
         actionLinkCreate={"manageorder-schedule/create"}
         actLinkEdit={"manageorder-schedule"}
       />

@@ -15,7 +15,7 @@ import ManageProduct from "./components/pages/manage-products/Index";
 import ManageProductCreate from "./components/pages/manage-products/Create";
 import ManageOrderSchedule from "./components/pages/manage-orderschedule/Index";
 import ManageOrderScheduleCreate from "./components/pages/manage-orderschedule/Create";
-// import ManageOrderScheduleMyOrderSchedule from "./components/pages/manage-orderschedule/MyOrderSchedule";
+import ManageOrderScheduleMyOrderSchedule from "./components/pages/manage-orderschedule/MyOrderSchedule";
 
 // const routes = [
 //   {
@@ -92,6 +92,11 @@ export default function App() {
             exact
             path="/manageorder-schedule"
             component={ManageOrderSchedule}
+          />
+          <Route
+            exact
+            path="/manageorder-schedule/my-order"
+            component={ManageOrderScheduleMyOrderSchedule}
           />
           <Route
             exact

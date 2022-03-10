@@ -23,7 +23,7 @@ export default function MyDataTable({
   const tbQuery = db.collection(tableName).orderBy(orderBy);
 
   React.useEffect(() => {
-    console.log("init");
+    console.log(`init ${tableName} ${orderBy}`);
     pageKeyMap.set(0, "");
     async function paginatedCount() {
       const query = tbQuery;
@@ -34,6 +34,7 @@ export default function MyDataTable({
       while (true) {
         const offsetQuery =
           Object.keys(lastDoc).length !== 0 ? query.startAfter(lastDoc) : query;
+
         const snapshot = await offsetQuery.limit(rowsPerPage).get();
         const size = snapshot.size;
 
@@ -180,6 +181,7 @@ export default function MyDataTable({
                               <tr key={item.id}>
                                 {bodyList
                                   ? bodyList.map((value, index) => {
+                                      console.log(item);
                                       const dataValue = item[value] + "";
                                       if (!dataValue.startsWith("http")) {
                                         // normal case
