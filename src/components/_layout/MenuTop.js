@@ -29,11 +29,6 @@ export default function MenuTop() {
             {/* Left navbar links */}
             <ul className="navbar-nav">
               <li className="nav-item">
-                <NavLink to="/" className="nav-link" activeClassName="active">
-                  หน้าแรก
-                </NavLink>
-              </li>
-              <li className="nav-item">
                 <NavLink
                   to="/manageorder-schedule/my-order"
                   className="nav-link"
@@ -71,6 +66,13 @@ export default function MenuTop() {
               </li>
             </ul>
           </div>
+          <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+            <li class="nav-item">
+              <NavLink to="/" className="nav-link" activeClassName="active">
+                Login
+              </NavLink>
+            </li>
+          </ul>
         </div>
       </nav>
     </div>

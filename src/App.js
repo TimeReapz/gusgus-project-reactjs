@@ -69,7 +69,11 @@ export default function App() {
         <MenuTop />
 
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route
+            exact
+            path="/"
+            component={ManageOrderScheduleMyOrderSchedule}
+          />
           <Route exact path="/dashboard" component={Dashboard} />
           {/* manageuser */}
           <Route exact path="/manageuser" component={ManageUser} />
