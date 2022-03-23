@@ -1,78 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
-import { firebase } from "../../../utils/firebase";
-import { useHistory } from "react-router-dom";
+import { db } from "../../../utils/firebase";
 
 export default function Create(props) {
   const history = useHistory();
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
+  const initUser = {
+    id: "",
+    name: "",
+  };
+
+  const [user, setUser] = useState(initUser);
+
+  const tbUsers = db.collection("tbUsers");
 
   useEffect(() => {
     if (props.match.params.id) {
-      setId(props.match.params.id);
-      const modelRef = firebase
-        .database()
-        .ref("tbUser")
-        .child(props.match.params.id);
-      modelRef.on("value", (snapshot) => {
-        const model = snapshot.val();
-        console.log(model);
-        setName(model.name);
-      });
+      tbUsers
+        .doc(props.match.params.id)
+        .get()
+        .then((snapshot) => {
+          setUser({ ...snapshot.data(), id: props.match.params.id });
+        });
     }
-  }, [props.match.params.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleOnChange = (e) => {
-    setName(e.target.value);
-  };
-
-  const saveUser = (e) => {
+  const save = (e) => {
     e.preventDefault();
-    if (id !== "") {
-      const modelRef = firebase.database().ref("tbUser").child(id);
-      modelRef.update({
-        name: name,
-        update_date: moment().format(),
-      });
+    if (user.id !== "") {
+      const model = {
+        name: user.name,
+        updateDate: moment().format(),
+      };
+
+      tbUsers.doc(user.id).update(model);
       history.push("/manageuser");
     } else {
-      const modelRef = firebase.database().ref("tbUser");
       const model = {
-        name: name,
-        create_date: moment().format(),
+        name: user.name,
+        createDate: moment().format(),
         isactive: 1,
       };
 
-      modelRef.push(model);
+      tbUsers.add(model);
       history.push("/manageuser");
     }
   };
-
-  // const saveUser = (e) => {
-  //   e.preventDefault();
-  //   var id = this.state.id;
-  //   if (id !== 0) {
-  //     // update
-  //     axios
-  //       .patch(process.env.REACT_APP_HOST_API + `/api/user/${id}`, {
-  //         name: this.name.value,
-  //       })
-  //       .then((response) => {
-  //         this.props.history.push("/manageuser");
-  //       });
-  //   } else {
-  //     // insert
-  //     axios
-  //       .post(process.env.REACT_APP_HOST_API + `/api/user`, {
-  //         name: this.name.value,
-  //       })
-  //       .then((response) => {
-  //         this.props.history.push("/manageuser");
-  //       });
-  //   }
-  // };
 
   return (
     <div>
@@ -97,7 +71,7 @@ export default function Create(props) {
                   </div>
                 </div>
                 <div className="card-body table-responsive p-0">
-                  <form onSubmit={saveUser}>
+                  <form onSubmit={save}>
                     <div className="card-body">
                       <div className="form-group">
                         <label htmlFor="name">ชื่อ</label>
@@ -106,8 +80,10 @@ export default function Create(props) {
                           className="form-control"
                           id="name"
                           placeholder="ชื่อลูกค้า"
-                          value={name}
-                          onChange={handleOnChange}
+                          value={user.name}
+                          onChange={(e) => {
+                            setUser({ ...user, name: e.target.value });
+                          }}
                         />
                       </div>
                     </div>
