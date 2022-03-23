@@ -20,13 +20,13 @@ export default function MyDataTable({
   const [pageKeyMap, setPageKeyMap] = React.useState(new Map());
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const tbQuery = db.collection(tableName).orderBy(orderBy);
+  const tbQuery = db.collection(tableName);
 
   React.useEffect(() => {
     console.log(`init ${tableName} ${orderBy}`);
     pageKeyMap.set(0, "");
     async function paginatedCount() {
-      const query = tbQuery;
+      const query = tbQuery.orderBy(orderBy);
 
       let lastDoc = {};
       let count = 0;
@@ -70,6 +70,7 @@ export default function MyDataTable({
     console.log("searchProduct");
     var q = search;
     tbQuery
+      .orderBy(orderBy)
       .startAt(q)
       .endAt(q + "\uf8ff")
       .get()
@@ -93,7 +94,13 @@ export default function MyDataTable({
       title: "ยืนยันการลบ",
     }).then((result) => {
       if (result.value) {
-        tbQuery.doc(id).delete();
+        tbQuery
+          .doc(id)
+          .delete()
+          .then((snap) => {
+            setDataTable(dataTable.filter((x) => x.id !== id));
+            setDataCount(dataCount - 1);
+          });
       }
     });
   };
@@ -101,6 +108,7 @@ export default function MyDataTable({
   const handleChangePage = (e, page) => {
     const key = pageKeyMap.get(page);
     tbQuery
+      .orderBy(orderBy)
       .startAfter(key)
       .limit(rowsPerPage)
       .get()
@@ -181,7 +189,6 @@ export default function MyDataTable({
                               <tr key={item.id}>
                                 {bodyList
                                   ? bodyList.map((value, index) => {
-                                      console.log(item);
                                       const dataValue = item[value] + "";
                                       if (!dataValue.startsWith("http")) {
                                         // normal case

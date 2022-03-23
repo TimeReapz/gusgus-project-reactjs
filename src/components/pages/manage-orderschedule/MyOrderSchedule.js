@@ -24,21 +24,18 @@ export default function Home() {
       const query = await tbOrderSchedules.orderBy("schedule").startAt(q).get();
       // listen every time data change in todo ref
       setDataTable(
-        query.docs.map((doc) => {
-          var models = doc.data();
-
-          // const temp = [];
-          // for (let id in models) {
-          //   var isSameDate =
-          //     moment(models[id].deliverTime, "YYYY-MM-DD").format(
-          //       "YYYY-MM-DD"
-          //     ) === moment().format("YYYY-MM-DD");
-          //   if (!isSameDate) {
-          //     temp.push({ id, ...models[id] });
-          //   }
-          // }
-          return { ...models, id: doc.id };
-        })
+        query.docs
+          .filter((doc) => {
+            var models = doc.data();
+            var isSameDate =
+              moment(models.deliverTime, "YYYY-MM-DD").format("YYYY-MM-DD") ===
+              moment().format("YYYY-MM-DD");
+            return !isSameDate;
+          })
+          .map((doc) => {
+            var models = doc.data();
+            return { ...models, id: doc.id };
+          })
       );
     }
     getInit();
@@ -47,6 +44,11 @@ export default function Home() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSchedule]);
+
+  const handleDeliverClick = (id) => {
+    setDataTable(dataTable.filter((x) => x.id !== id));
+    SwalToast.fire();
+  };
 
   return (
     <div>
@@ -88,7 +90,11 @@ export default function Home() {
             <div className="col-12">
               {dataTable.length > 0
                 ? dataTable.map((item) => (
-                    <OrderScheduleBox item={item} key={item.id} />
+                    <OrderScheduleBox
+                      item={item}
+                      key={item.id}
+                      onDeliverClick={handleDeliverClick}
+                    />
                   ))
                 : "ไม่พบข้อมูล"}
             </div>
@@ -99,7 +105,7 @@ export default function Home() {
   );
 }
 
-function OrderScheduleBox({ item }) {
+function OrderScheduleBox({ item, onDeliverClick }) {
   const tbOrders = db.collection("tbOrders");
   const tbOrderSchedules = db.collection("tbOrderSchedules");
 
@@ -123,7 +129,7 @@ function OrderScheduleBox({ item }) {
         // insert tbHistory
         const modelOrderScheduleRef = tbOrderSchedules.doc(item.id);
         modelOrderScheduleRef.update({ deliverTime: moment().format() });
-        SwalToast.fire();
+        onDeliverClick(item.id);
       }
     });
   };
@@ -132,10 +138,7 @@ function OrderScheduleBox({ item }) {
       <div className="card card-outline card-primary">
         <div className="card-body p-3">
           <div className="row">
-            <div className="col-8 text-lg text-bold">
-              {console.log(item)}
-              {item.users_name}
-            </div>
+            <div className="col-8 text-lg text-bold">{item.users_name}</div>
           </div>
           <div className="row mt-3">
             <div className="col-12">
