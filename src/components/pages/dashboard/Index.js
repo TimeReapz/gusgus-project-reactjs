@@ -17,7 +17,7 @@ const DashBoard = () => {
         <p>This is the dashboard, if you can see this you're logged in.</p>
         <button
           onClick={() => firebase.auth().signOut()}
-          class="btn btn-danger"
+          className="btn btn-danger"
         >
           Sign Out
         </button>

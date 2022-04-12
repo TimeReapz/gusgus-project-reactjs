@@ -5,7 +5,7 @@ import Header from "./components/_layout/Header";
 import Footer from "./components/_layout/Footer";
 import MenuTop from "./components/_layout/MenuTop";
 
-import Home from "./components/pages/home/Home";
+//import Home from "./components/pages/home/Home";
 import Dashboard from "./components/pages/dashboard/Index";
 import LogIn from "./components/pages/authentication/LogIn";
 import SignUp from "./components/pages/authentication/SignUp";

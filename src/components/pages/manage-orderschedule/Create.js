@@ -338,8 +338,7 @@ function OrderScheduleItemFunc(props) {
   );
 
   const removeOrderItem = (event) => {
-    event.preventDefault();
-    props.onOrderScheduleItemChange({}, props.index);
+    props.onOrderScheduleItemChange(props.index, {});
   };
 
   return (
