@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../../utils/firebase";
-import { SwalConfirm, SwalToast } from "../../../lib/script";
+import { SwalConfirm, SwalToast, SwalAlert } from "../../../lib/script";
 import moment from "moment";
 import Select from "react-select";
 
 export default function Home() {
   const [dataTable, setDataTable] = useState([]);
   const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8");
+  const [search, setSearch] = React.useState("");
 
   const schedule = [
     { value: "ทุกพระ 8", label: "ทุกพระ 8" },
@@ -19,35 +20,55 @@ export default function Home() {
   const tbOrderSchedules = db.collection("tbOrderSchedules");
 
   useEffect(() => {
-    const q = dataSchedule;
-    async function getInit() {
-      const query = await tbOrderSchedules.orderBy("schedule").startAt(q).get();
-      // listen every time data change in todo ref
-      setDataTable(
-        query.docs
-          .filter((doc) => {
-            var models = doc.data();
-            var isSameDate =
-              moment(models.deliverTime, "YYYY-MM-DD").format("YYYY-MM-DD") ===
-              moment().format("YYYY-MM-DD");
-            return !isSameDate;
-          })
-          .map((doc) => {
-            var models = doc.data();
-            return { ...models, id: doc.id };
-          })
-      );
-    }
-    getInit();
+    getInit(dataSchedule, "");
     return () => {
       setDataTable([]);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSchedule]);
 
+  async function getInit(dataSchedule, search) {
+    const query = await tbOrderSchedules
+      .orderBy("schedule")
+      .startAt(dataSchedule)
+      .get();
+    // listen every time data change in todo ref
+    setDataTable(
+      query.docs
+        .filter((doc) => {
+          var models = doc.data();
+          var isSameDate =
+            moment(models.deliverTime, "YYYY-MM-DD").format("YYYY-MM-DD") ===
+            moment().format("YYYY-MM-DD");
+          if (search !== "") {
+            if (models.users_name.startsWith(search)) {
+              return true;
+            }
+            return false;
+          } else {
+            return !isSameDate;
+          }
+        })
+        .map((doc) => {
+          var models = doc.data();
+          return { ...models, id: doc.id };
+        })
+    );
+  }
+
   const handleDeliverClick = (id) => {
     setDataTable(dataTable.filter((x) => x.id !== id));
     SwalToast.fire();
+  };
+
+  const handleOnChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  const searchUser = (e) => {
+    e.preventDefault();
+    console.log("searchUser" + search);
+    getInit(dataSchedule, search);
   };
 
   return (
@@ -77,6 +98,23 @@ export default function Home() {
                   (options) => options.value === dataSchedule
                 )}
               />
+            </div>
+            <div className="col-12 mt-1">
+              <form onSubmit={searchUser}>
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="ค้นหาชื่อ"
+                    onChange={handleOnChange}
+                  />
+                  <div className="input-group-append">
+                    <button type="submit" className="btn btn-default">
+                      <i className="fas fa-search" />
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
 
@@ -139,11 +177,19 @@ function OrderScheduleBox({ item, onDeliverClick }) {
         <div className="card-body p-3">
           <div className="row">
             <div className="col-8 text-lg text-bold">{item.users_name}</div>
+            <div
+              className={
+                "col-4 text-md text-mute text-right d-table " +
+                (item.delivery === "มาเอาที่ตลาด" ? "text-green" : "text-red")
+              }
+            >
+              <div className="d-table-cell align-middle">{item.delivery}</div>
+            </div>
           </div>
           <div className="row mt-3">
             <div className="col-12">
               {item.orderScheduleItems.map((orderScheduleItem, index) => (
-                <div className="info-box" key={index}>
+                <div className="info-box border-0 rounded-0 m-0" key={index}>
                   <span className="info-box-icon">
                     <img
                       src={orderScheduleItem.products_thumbnail}
@@ -153,11 +199,12 @@ function OrderScheduleBox({ item, onDeliverClick }) {
                   <div className="info-box-content">
                     <span className="info-box-text text-md">
                       {orderScheduleItem.products_name +
-                        (orderScheduleItem.products_subType !== ""
+                        (orderScheduleItem.products_subType !== "" &&
+                        orderScheduleItem.products_subType !== "-"
                           ? " (" + orderScheduleItem.products_subType + ")"
                           : "")}
                     </span>
-                    <span className="info-box-number">
+                    <span className="info-box-number text-lg">
                       {orderScheduleItem.products_price} ฿
                     </span>
                   </div>
@@ -170,7 +217,12 @@ function OrderScheduleBox({ item, onDeliverClick }) {
               ))}
             </div>
           </div>
-          <div className="row">
+          <div className="row mt-2">
+            <div className="col-12 text-orange text-bold text-lg">
+              หมายเหตุ: {item.remark}
+            </div>
+          </div>
+          <div className="row mt-3">
             <div className="col-6 text-lg d-table">
               <div className="d-table-cell align-middle">
                 ราคารวม <b>{item.totalPrice} ฿</b>
