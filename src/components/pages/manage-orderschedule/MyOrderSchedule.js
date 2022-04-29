@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../../utils/firebase";
-import { SwalConfirm, SwalToast, SwalAlert } from "../../../lib/script";
+import { SwalConfirm, SwalToast } from "../../../lib/script";
 import moment from "moment";
 import Select from "react-select";
 
