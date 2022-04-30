@@ -236,11 +236,15 @@ function OrderScheduleBox({ item, onDeliverClick }) {
               ))}
             </div>
           </div>
-          <div className="row mt-2">
-            <div className="col-12 text-orange text-bold text-lg">
-              หมายเหตุ: {item.remark}
+          {item.remark ? (
+            <div className="row mt-2">
+              <div className="col-12 text-orange text-bold text-lg">
+                หมายเหตุ: {item.remark}
+              </div>
             </div>
-          </div>
+          ) : (
+            ""
+          )}
           <div className="row mt-3">
             <div className="col-6 text-lg d-table">
               <div className="d-table-cell align-middle">
