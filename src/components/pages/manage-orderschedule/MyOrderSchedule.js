@@ -4,33 +4,39 @@ import { SwalConfirm, SwalToast } from "../../../lib/script";
 import moment from "moment";
 import Select from "react-select";
 
+const schedule = [
+  { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
+  { value: "ทุกพระ 15|ทุกพระ 8,15", label: "ทุกพระ 15" },
+  { value: "วันโกน", label: "วันโกน" },
+  { value: "วันพฤหัส", label: "วันพฤหัส" },
+  { value: "วันอาทิตย์", label: "วันอาทิตย์" },
+];
+
+const delivery = [
+  { value: "ไปส่งที่บ้าน", label: "ไปส่งที่บ้าน" },
+  { value: "มาเอาที่ตลาด", label: "มาเอาที่ตลาด" },
+];
+
 export default function Home() {
   const [dataTable, setDataTable] = useState([]);
-  const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8");
+  const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8|ทุกพระ 8,15");
+  const [dataDelivery, setDataDelivery] = useState("ไปส่งที่บ้าน");
   const [search, setSearch] = React.useState("");
-
-  const schedule = [
-    { value: "ทุกพระ 8", label: "ทุกพระ 8" },
-    { value: "ทุกพระ 15", label: "ทุกพระ 15" },
-    { value: "วันโกน", label: "วันโกน" },
-    { value: "วันพฤหัส", label: "วันพฤหัส" },
-    { value: "วันอาทิตย์", label: "วันอาทิตย์" },
-  ];
 
   const tbOrderSchedules = db.collection("tbOrderSchedules");
 
   useEffect(() => {
-    getInit(dataSchedule, "");
+    getInit(dataSchedule, dataDelivery, "");
     return () => {
       setDataTable([]);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSchedule]);
+  }, [dataSchedule, dataDelivery]);
 
-  async function getInit(dataSchedule, search) {
+  async function getInit(dataSchedule, dataDelivery, search) {
     const query = await tbOrderSchedules
-      .orderBy("schedule")
-      .startAt(dataSchedule)
+      .where("delivery", "==", dataDelivery)
+      .where("schedule", "in", dataSchedule.split("|"))
       .get();
     // listen every time data change in todo ref
     setDataTable(
@@ -68,7 +74,7 @@ export default function Home() {
   const searchUser = (e) => {
     e.preventDefault();
     console.log("searchUser" + search);
-    getInit(dataSchedule, search);
+    getInit(dataSchedule, dataDelivery, search);
   };
 
   return (
@@ -96,6 +102,19 @@ export default function Home() {
                 isSearchable={false}
                 value={schedule.filter(
                   (options) => options.value === dataSchedule
+                )}
+              />
+            </div>
+            <div className="col-12 mt-1">
+              <Select
+                options={delivery}
+                id="delivery"
+                onChange={(e) => {
+                  setDataDelivery(e.value);
+                }}
+                isSearchable={false}
+                value={delivery.filter(
+                  (options) => options.value === dataDelivery
                 )}
               />
             </div>
