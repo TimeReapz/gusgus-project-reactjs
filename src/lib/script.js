@@ -97,6 +97,7 @@ const SwalConfirm = Swal.mixin({
   cancelButtonColor: "#d33",
   cancelButtonText: "ยกเลิก",
   confirmButtonText: "ยืนยัน",
+  reverseButtons: true,
 });
 
 const SwalAlert = Swal.mixin({
