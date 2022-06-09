@@ -26,7 +26,6 @@ export default function MyUploadImage({
 
   return (
     <>
-      <div>sss</div>
       <div
         className="text-center position-relative"
         style={{

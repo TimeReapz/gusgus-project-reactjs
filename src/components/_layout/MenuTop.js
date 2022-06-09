@@ -33,7 +33,6 @@ export default function MenuTop() {
                   to="/manageorder-schedule/my-order"
                   className="nav-link"
                   activeClassName="active"
-                  
                 >
                   จัดส่ง
                 </NavLink>
@@ -63,6 +62,15 @@ export default function MenuTop() {
                   activeClassName="active"
                 >
                   รายชื่อสินค้า
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/manageconfig"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  ตั้งค่า
                 </NavLink>
               </li>
             </ul>

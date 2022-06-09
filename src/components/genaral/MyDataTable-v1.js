@@ -57,7 +57,9 @@ export default function MyDataTable({
       setDataCount(count);
     }
     paginatedCount();
-
+    return () => {
+      setDataTable([]); // This worked for me
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

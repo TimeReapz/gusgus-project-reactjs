@@ -113,6 +113,14 @@ export default function Create(props) {
   const save = async (e) => {
     console.log("submit");
     e.preventDefault();
+
+    // remove empty orderScheduleItems
+    orderSchedule.orderScheduleItems = orderSchedule.orderScheduleItems.filter(
+      (item) => {
+        return item.products_id !== "";
+      }
+    );
+
     console.log(orderSchedule);
     if (orderSchedule.id !== "") {
       // update

@@ -17,6 +17,8 @@ import ManageOrderSchedule from "./components/pages/manage-orderschedule/Index";
 import ManageOrderScheduleCreate from "./components/pages/manage-orderschedule/Create";
 import ManageOrderScheduleMyOrderSchedule from "./components/pages/manage-orderschedule/MyOrderSchedule";
 
+import ManageConfig from "./components/pages/manage-config/Index";
+
 // const routes = [
 //   {
 //     path: "/",
@@ -112,6 +114,7 @@ export default function App() {
             path="/manageorder-schedule/:id"
             component={ManageOrderScheduleCreate}
           />
+          <Route exact path="/manageconfig" component={ManageConfig} />
 
           <Route exact path="/login" component={LogIn} />
           <Route exact path="/signup" component={SignUp} />
