@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../pages/authentication/Auth";
+import { firebase } from "../../utils/firebase";
 
 export default function MenuTop() {
+  const { currentUser } = useContext(AuthContext);
+
   return (
     <div>
       <nav className="main-header navbar navbar-expand-md navbar-light navbar-white">
@@ -66,6 +70,15 @@ export default function MenuTop() {
               </li>
               <li className="nav-item">
                 <NavLink
+                  to="/dashboard"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  ภาพรวม
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
                   to="/manageconfig"
                   className="nav-link"
                   activeClassName="active"
@@ -77,9 +90,20 @@ export default function MenuTop() {
           </div>
           <ul className="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
             <li className="nav-item">
-              <NavLink to="/" className="nav-link" activeClassName="active">
-                Login
-              </NavLink>
+              {currentUser ? (
+                <NavLink
+                  to="/"
+                  onClick={() => firebase.auth().signOut()}
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  Logout
+                </NavLink>
+              ) : (
+                <NavLink to="/" className="nav-link" activeClassName="active">
+                  Login
+                </NavLink>
+              )}
             </li>
           </ul>
         </div>

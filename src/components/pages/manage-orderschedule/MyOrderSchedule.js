@@ -191,7 +191,7 @@ function OrderScheduleBox({ item, onDeliverClick }) {
     });
   };
   return (
-    <div>
+    <>
       <div className="card card-outline card-primary">
         <div className="card-body p-3">
           <div className="row">
@@ -211,7 +211,11 @@ function OrderScheduleBox({ item, onDeliverClick }) {
                 <div className="info-box border-0 rounded-0 m-0" key={index}>
                   <span className="info-box-icon">
                     <img
-                      src={orderScheduleItem.products_thumbnail}
+                      src={
+                        orderScheduleItem.products_thumbnail !== ""
+                          ? orderScheduleItem.products_thumbnail
+                          : "/images/no-image.png"
+                      }
                       alt={orderScheduleItem.products_name}
                     />
                   </span>
@@ -259,6 +263,6 @@ function OrderScheduleBox({ item, onDeliverClick }) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

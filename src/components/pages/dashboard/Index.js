@@ -1,28 +1,131 @@
-import React, { useContext } from "react";
-import { Redirect } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { db } from "../../../utils/firebase";
+import moment from "moment";
+import Select from "react-select";
 import { AuthContext } from "../authentication/Auth";
 import { firebase } from "../../../utils/firebase";
 
+const schedule = [
+  { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
+  { value: "ทุกพระ 15|ทุกพระ 8,15", label: "ทุกพระ 15" },
+  { value: "วันโกน", label: "วันโกน" },
+  { value: "วันพฤหัส", label: "วันพฤหัส" },
+  { value: "วันอาทิตย์", label: "วันอาทิตย์" },
+];
+
 const DashBoard = () => {
-  const { currentUser } = useContext(AuthContext);
+  const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8|ทุกพระ 8,15");
+  const [dataTable, setDataTable] = useState(new Set());
 
-  if (!currentUser) {
-    return <Redirect to="/login" />;
+  const tbOrderSchedules = db.collection("tbOrderSchedules");
+
+  useEffect(() => {
+    getInit(dataSchedule);
+    return () => {
+      setDataTable([]);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataSchedule]);
+
+  async function getInit(dataSchedule) {
+    const query = await tbOrderSchedules
+      .where("schedule", "in", dataSchedule.split("|"))
+      .get();
+    var result = [];
+    query.docs.map((doc) => {
+      var models = doc.data().orderScheduleItems;
+
+      models.forEach((item) => {
+        if (!result.some((e) => e.products_id === item.products_id)) {
+          result.push(item);
+        } else {
+          const objIndex = result.findIndex(
+            (obj) => obj.products_id === item.products_id
+          );
+          result[objIndex].qty =
+            parseInt(result[objIndex].qty) + parseInt(item.qty);
+        }
+      });
+    });
+    setDataTable(result);
   }
-
   return (
-    <div>
-      <div className="container mt-5">
-        <h1>Welcome</h1>
-        <p>This is the dashboard, if you can see this you're logged in.</p>
-        <button
-          onClick={() => firebase.auth().signOut()}
-          className="btn btn-danger"
-        >
-          Sign Out
-        </button>
-      </div>
-    </div>
+    <>
+      <section className="content-header">
+        <div className="container">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1>ภาพรวม</h1>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="content">
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <Select
+                options={schedule}
+                id="schedule"
+                onChange={(e) => {
+                  setDataSchedule(e.value);
+                }}
+                isSearchable={false}
+                value={schedule.filter(
+                  (options) => options.value === dataSchedule
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="row mt-4">
+            <div className="col-12">
+              {dataTable.length > 0
+                ? dataTable
+                    .sort((a, b) =>
+                      a.products_name.localeCompare(b.products_name)
+                    )
+                    .map((item) => (
+                      <div
+                        className="info-box border-0 rounded-0 m-0"
+                        key={item.products_id}
+                      >
+                        <span className="info-box-icon">
+                          <img
+                            src={
+                              item.products_thumbnail !== ""
+                                ? item.products_thumbnail
+                                : "/images/no-image.png"
+                            }
+                            alt={item.products_name}
+                          />
+                        </span>
+                        <div className="info-box-content">
+                          <span className="info-box-text text-md">
+                            {item.products_name +
+                              (item.products_subType !== "" &&
+                              item.products_subType !== "-"
+                                ? " (" + item.products_subType + ")"
+                                : "")}
+                          </span>
+                          <span className="info-box-number text-lg">
+                            {item.products_price} ฿
+                          </span>
+                        </div>
+                        <div className="info-box-content">
+                          <span className="info-box-text text-xl text-right">
+                            x {item.qty}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                : "ไม่พบข้อมูล"}
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
