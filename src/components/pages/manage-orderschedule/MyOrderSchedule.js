@@ -3,6 +3,8 @@ import { db } from "../../../utils/firebase";
 import { SwalConfirm, SwalToast } from "../../../lib/script";
 import moment from "moment";
 import Select from "react-select";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const schedule = [
   { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
@@ -210,14 +212,18 @@ function OrderScheduleBox({ item, onDeliverClick }) {
               {item.orderScheduleItems.map((orderScheduleItem, index) => (
                 <div className="info-box border-0 rounded-0 m-0" key={index}>
                   <span className="info-box-icon">
-                    <img
-                      src={
-                        orderScheduleItem.products_thumbnail !== ""
-                          ? orderScheduleItem.products_thumbnail
-                          : "/images/no-image.png"
-                      }
-                      alt={orderScheduleItem.products_name}
-                    />
+                    <Zoom>
+                      <div className="text-center position-relative thumbnail-product">
+                        <img
+                          src={
+                            orderScheduleItem.products_thumbnail !== ""
+                              ? orderScheduleItem.products_thumbnail
+                              : "/images/no-image.png"
+                          }
+                          alt={orderScheduleItem.products_name}
+                        />
+                      </div>
+                    </Zoom>
                   </span>
                   <div className="info-box-content">
                     <span className="info-box-text text-md">

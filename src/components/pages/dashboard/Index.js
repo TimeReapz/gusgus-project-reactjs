@@ -1,9 +1,8 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../../../utils/firebase";
-import moment from "moment";
 import Select from "react-select";
-import { AuthContext } from "../authentication/Auth";
-import { firebase } from "../../../utils/firebase";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const schedule = [
   { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
@@ -32,7 +31,7 @@ const DashBoard = () => {
       .where("schedule", "in", dataSchedule.split("|"))
       .get();
     var result = [];
-    query.docs.map((doc) => {
+    query.docs.forEach((doc) => {
       var models = doc.data().orderScheduleItems;
 
       models.forEach((item) => {
@@ -92,14 +91,18 @@ const DashBoard = () => {
                         key={item.products_id}
                       >
                         <span className="info-box-icon">
-                          <img
-                            src={
-                              item.products_thumbnail !== ""
-                                ? item.products_thumbnail
-                                : "/images/no-image.png"
-                            }
-                            alt={item.products_name}
-                          />
+                          <Zoom>
+                            <div className="text-center position-relative thumbnail-product">
+                              <img
+                                src={
+                                  item.products_thumbnail !== ""
+                                    ? item.products_thumbnail
+                                    : "/images/no-image.png"
+                                }
+                                alt={item.products_name}
+                              />
+                            </div>
+                          </Zoom>
                         </span>
                         <div className="info-box-content">
                           <span className="info-box-text text-md">

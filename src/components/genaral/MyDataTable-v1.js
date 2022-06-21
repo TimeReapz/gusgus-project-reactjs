@@ -3,6 +3,8 @@ import { SwalAlert, SwalConfirm } from "../../lib/script";
 import { Link } from "react-router-dom";
 import { db } from "../../utils/firebase";
 import { TablePagination } from "@mui/material";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 export default function MyDataTable({
   tableName,
@@ -192,7 +194,10 @@ export default function MyDataTable({
                                 {bodyList
                                   ? bodyList.map((value, index) => {
                                       const dataValue = item[value] + "";
-                                      if (!dataValue.startsWith("http")) {
+                                      if (
+                                        !dataValue.startsWith("http") &&
+                                        !(index === 3 && dataValue === "")
+                                      ) {
                                         // normal case
                                         return (
                                           <td
@@ -209,28 +214,18 @@ export default function MyDataTable({
                                             key={index}
                                             className="align-middle"
                                           >
-                                            <div
-                                              className="text-center position-relative"
-                                              style={{
-                                                width: "60px",
-                                                height: "60px",
-                                                border:
-                                                  "1px dashed rgb(182 186 189)",
-                                                cursor: "pointer",
-                                              }}
-                                            >
-                                              <img
-                                                src={dataValue}
-                                                className="w-100 position-absolute"
-                                                style={{
-                                                  left: "50%",
-                                                  top: "50%",
-                                                  transform:
-                                                    "translate(-50%, -50%)",
-                                                }}
-                                                alt=""
-                                              />
-                                            </div>
+                                            <Zoom>
+                                              <div className="text-center position-relative thumbnail-product">
+                                                <img
+                                                  src={
+                                                    dataValue !== ""
+                                                      ? dataValue
+                                                      : "/images/no-image.png"
+                                                  }
+                                                  alt=""
+                                                />
+                                              </div>
+                                            </Zoom>
                                           </td>
                                         );
                                       }
