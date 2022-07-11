@@ -9,7 +9,9 @@ const schedule = [
   { value: "ทุกพระ 15|ทุกพระ 8,15", label: "ทุกพระ 15" },
   { value: "วันโกน", label: "วันโกน" },
   { value: "วันพฤหัส", label: "วันพฤหัส" },
+  { value: "วันเสาร์", label: "วันเสาร์" },
   { value: "วันอาทิตย์", label: "วันอาทิตย์" },
+  { value: "วันหวยออก", label: "วันหวยออก" },
 ];
 
 const DashBoard = () => {
