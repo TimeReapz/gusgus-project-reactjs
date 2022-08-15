@@ -51,7 +51,7 @@ export default function Home() {
             moment(models.deliverTime, "YYYY-MM-DD").format("YYYY-MM-DD") ===
             moment().format("YYYY-MM-DD");
           if (search !== "") {
-            if (models.users_name.startsWith(search)) {
+            if (models.users_name.indexOf(search) !== -1) {
               return true;
             }
             return false;

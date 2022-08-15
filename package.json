@@ -12,7 +12,7 @@
     "animate.css": "^4.1.1",
     "axios": "^0.21.1",
     "firebase": "^8.9.1",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "prop-types": "^15.8.1",
     "querybase": "^0.6.0",
     "react": "^17.0.2",
