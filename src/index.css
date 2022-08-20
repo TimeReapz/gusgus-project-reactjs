@@ -34,3 +34,24 @@ p.MuiTablePagination-displayedRows {
   position: absolute;
   width: 100%;
 }
+
+.nav-footer > .nav-item > .nav-link {
+  color: gray;
+}
+
+.nav-footer > .nav-item > .nav-link > i {
+  font-size: 25px;
+}
+
+.nav-footer > .nav-item > .nav-link > div {
+  font-size: 12px;
+}
+
+.nav-footer > .nav-item > .nav-link.active {
+  color: #007bff;
+}
+
+/* Override */
+.layout-footer-fixed .wrapper .content-wrapper {
+  padding-bottom: 90px !important;
+}

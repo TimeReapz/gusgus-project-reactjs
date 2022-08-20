@@ -4,6 +4,7 @@ import { AuthProvider } from "./components/pages/authentication/Auth";
 import Header from "./components/_layout/Header";
 import Footer from "./components/_layout/Footer";
 import MenuTop from "./components/_layout/MenuTop";
+import MenuLeft from "./components/_layout/MenuLeft";
 
 import Home from "./components/pages/home/Home";
 import Dashboard from "./components/pages/dashboard/Index";
@@ -69,66 +70,67 @@ export default function App() {
       <Router>
         <Header />
         <MenuTop />
+        <MenuLeft />
 
-        <Switch>
-          <Route
-            exact
-            path="/"
-            component={ManageOrderScheduleMyOrderSchedule}
-          />
-          <Route exact path="/home" component={Home} />
-          <Route exact path="/dashboard" component={Dashboard} />
-          {/* manageuser */}
-          <Route exact path="/manageuser" component={ManageUser} />
-          <Route exact path="/manageuser/create" component={ManageUserCreate} />
-          <Route exact path="/manageuser/:id" component={ManageUserCreate} />
-          {/* manageproduct */}
-          <Route exact path="/manageproduct" component={ManageProduct} />
-          <Route
-            exact
-            path="/manageproduct/create"
-            component={ManageProductCreate}
-          />
-          <Route
-            exact
-            path="/manageproduct/:id"
-            component={ManageProductCreate}
-          />
-          {/* manageorder-schedule */}
-          <Route
-            exact
-            path="/manageorder-schedule"
-            component={ManageOrderSchedule}
-          />
-          <Route
-            exact
-            path="/manageorder-schedule/my-order"
-            component={ManageOrderScheduleMyOrderSchedule}
-          />
-          <Route
-            exact
-            path="/manageorder-schedule/create"
-            component={ManageOrderScheduleCreate}
-          />
-          <Route
-            exact
-            path="/manageorder-schedule/:id"
-            component={ManageOrderScheduleCreate}
-          />
-          <Route exact path="/manageconfig" component={ManageConfig} />
+        <div className="content-wrapper">
+          <Switch>
+            <Route
+              exact
+              path="/"
+              component={ManageOrderScheduleMyOrderSchedule}
+            />
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/dashboard" component={Dashboard} />
+            {/* manageuser */}
+            <Route exact path="/manageuser" component={ManageUser} />
+            <Route
+              exact
+              path="/manageuser/create"
+              component={ManageUserCreate}
+            />
+            <Route exact path="/manageuser/:id" component={ManageUserCreate} />
+            {/* manageproduct */}
+            <Route exact path="/manageproduct" component={ManageProduct} />
+            <Route
+              exact
+              path="/manageproduct/create"
+              component={ManageProductCreate}
+            />
+            <Route
+              exact
+              path="/manageproduct/:id"
+              component={ManageProductCreate}
+            />
+            {/* manageorder-schedule */}
+            <Route
+              exact
+              path="/manageorder-schedule"
+              component={ManageOrderSchedule}
+            />
+            <Route
+              exact
+              path="/my-orderschedule"
+              component={ManageOrderScheduleMyOrderSchedule}
+            />
+            <Route
+              exact
+              path="/manageorder-schedule/create"
+              component={ManageOrderScheduleCreate}
+            />
+            <Route
+              exact
+              path="/manageorder-schedule/:id"
+              component={ManageOrderScheduleCreate}
+            />
+            <Route exact path="/manageconfig" component={ManageConfig} />
 
-          <Route exact path="/login" component={LogIn} />
-          <Route exact path="/signup" component={SignUp} />
-        </Switch>
+            <Route exact path="/login" component={LogIn} />
+            <Route exact path="/signup" component={SignUp} />
+          </Switch>
+        </div>
 
-        {/* <Switch>
-          {routes.map((route, i) => (
-            <RouteWithSubRoutes key={i} {...route} />
-          ))}
-        </Switch> */}
+        <Footer />
       </Router>
-
-      <Footer />
     </AuthProvider>
   );
 }

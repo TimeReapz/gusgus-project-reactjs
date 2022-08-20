@@ -82,12 +82,12 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <>
       <section className="content-header">
         <div className="container">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1>รายการจัดส่ง</h1>
+              <h1>จัดส่ง</h1>
             </div>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 }
 
