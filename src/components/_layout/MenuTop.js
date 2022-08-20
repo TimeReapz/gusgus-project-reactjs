@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { AuthContext } from "../pages/authentication/Auth";
 import { firebase } from "../../utils/firebase";
 
