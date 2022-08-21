@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 export default function Footer() {
   return (
     <>
-      <footer class="main-footer p-0">
+      <footer className="main-footer p-0">
         <nav className="navbar navbar-expand justify-content-center text-center p-0 pt-1">
           <ul className="navbar-nav nav-footer w-100">
             <li className="nav-item w-100">
@@ -33,7 +33,7 @@ export default function Footer() {
                 className="nav-link"
                 activeClassName="active"
               >
-                <i class="fa fa-address-book"></i>
+                <i className="fa fa-address-book"></i>
                 <div>ลูกค้า</div>
               </NavLink>
             </li>
@@ -43,7 +43,7 @@ export default function Footer() {
                 className="nav-link"
                 activeClassName="active"
               >
-                <i class="fa fa-fan"></i>
+                <i className="fa fa-fan"></i>
                 <div>สินค้า</div>
               </NavLink>
             </li>
@@ -53,7 +53,7 @@ export default function Footer() {
                 className="nav-link"
                 activeClassName="active"
               >
-                <i class="fa fa-layer-group"></i>
+                <i className="fa fa-layer-group"></i>
                 <div>ภาพรวม</div>
               </NavLink>
             </li>

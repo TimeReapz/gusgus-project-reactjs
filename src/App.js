@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import { AuthProvider } from "./components/pages/authentication/Auth";
 import Header from "./components/_layout/Header";
 import Footer from "./components/_layout/Footer";
@@ -17,6 +22,9 @@ import ManageProductCreate from "./components/pages/manage-products/Create";
 import ManageOrderSchedule from "./components/pages/manage-orderschedule/Index";
 import ManageOrderScheduleCreate from "./components/pages/manage-orderschedule/Create";
 import ManageOrderScheduleMyOrderSchedule from "./components/pages/manage-orderschedule/MyOrderSchedule";
+
+import DashboardMonthlyCustomer from "./components/pages/dashboard/MonthlyCustomer";
+import DashboardMonthlyOverall from "./components/pages/dashboard/MonthlyOverall";
 
 import ManageConfig from "./components/pages/manage-config/Index";
 
@@ -74,13 +82,19 @@ export default function App() {
 
         <div className="content-wrapper">
           <Switch>
-            <Route
-              exact
-              path="/"
-              component={ManageOrderScheduleMyOrderSchedule}
-            />
+            <Redirect exact from="/" to="/my-orderschedule" />
             <Route exact path="/home" component={Home} />
             <Route exact path="/dashboard" component={Dashboard} />
+            <Route
+              exact
+              path="/dashboard-monthly-customer"
+              component={DashboardMonthlyCustomer}
+            />
+            <Route
+              exact
+              path="/dashboard-monthly-overall"
+              component={DashboardMonthlyOverall}
+            />
             {/* manageuser */}
             <Route exact path="/manageuser" component={ManageUser} />
             <Route

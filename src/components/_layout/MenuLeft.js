@@ -106,6 +106,26 @@ export default function MenuLeft() {
               </li>
               <li className="nav-item">
                 <NavLink
+                  to="/dashboard-monthly-overall"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <i className="far fa-circle nav-icon" />
+                  <p>สรุปรายเดือนทั้งหมด</p>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/dashboard-monthly-customer"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  <i className="far fa-circle nav-icon" />
+                  <p>สรุปรายเดือนรายลูกค้า</p>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
                   to="/manageconfig"
                   className="nav-link"
                   activeClassName="active"
