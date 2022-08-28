@@ -8,7 +8,7 @@ export default function Index() {
         <div className="container">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1>รายการจัดส่ง</h1>
+              <h1>รายการจัดส่ง(ลูกค้าประจำ)</h1>
             </div>
           </div>
         </div>

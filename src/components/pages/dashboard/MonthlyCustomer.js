@@ -3,6 +3,8 @@ import { db } from "../../../utils/firebase";
 import Select from "react-select";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 const schedule = [
   { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
@@ -17,6 +19,7 @@ const schedule = [
 const DashBoard = () => {
   const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8|ทุกพระ 8,15");
   const [dataTable, setDataTable] = useState(new Set());
+  const [value, onChange] = useState(new Date());
 
   const tbOrders = db.collection("tbOrders");
 
@@ -79,6 +82,9 @@ const DashBoard = () => {
                     </div>
                   ))
                 : "ไม่พบข้อมูล"}
+            </div>
+            <div className="col-12">
+              <Calendar onChange={onChange} value={value} />
             </div>
           </div>
         </div>

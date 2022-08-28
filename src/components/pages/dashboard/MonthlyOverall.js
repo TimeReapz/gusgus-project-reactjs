@@ -25,7 +25,10 @@ export default function MonthlyOverall() {
 
     query.docs.forEach((doc) => {
       var data = doc.data();
-      var createDate = moment(data.create_date, "YYYY-MM-DD").format("MM MMMM");
+      var createDate =
+        data.create_date !== undefined
+          ? moment(data.create_date, "YYYY-MM-DD").format("MM MMMM")
+          : moment(data.createDate, "YYYY-MM-DD").format("MM MMMM");
 
       if (!result.some((e) => e.groupDate === createDate)) {
         if (data.tbOrderSchedule.totalPrice !== "") {

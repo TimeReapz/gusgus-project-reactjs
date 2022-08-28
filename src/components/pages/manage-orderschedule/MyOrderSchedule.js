@@ -177,7 +177,7 @@ function OrderScheduleBox({ item, onDeliverClick }) {
       if (result.value) {
         // insert tbOrder
         let modelOrder = {
-          create_date: moment().format(),
+          createDate: moment().format(),
           isactive: 1,
           orderTypeId: 1,
           orderTypeName: "ลูกค้าประจำ",
