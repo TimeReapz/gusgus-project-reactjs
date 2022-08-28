@@ -186,11 +186,11 @@ function OrderScheduleBox({ item, onDeliverClick }) {
         };
         console.log(modelOrder);
         const modelOrderRef = tbOrders.doc();
-        //modelOrderRef.set(modelOrder, { merge: true });
+        modelOrderRef.set(modelOrder, { merge: true });
 
         // insert tbHistory
         const modelOrderScheduleRef = tbOrderSchedules.doc(item.id);
-        //modelOrderScheduleRef.update({ deliverTime: moment().format() });
+        modelOrderScheduleRef.update({ deliverTime: moment().format() });
         onDeliverClick(item.id);
       }
     });
@@ -200,9 +200,7 @@ function OrderScheduleBox({ item, onDeliverClick }) {
       <div className="card card-outline card-primary">
         <div className="card-body p-3">
           <div className="row">
-            <div className="col-8 text-lg text-bold">
-              {item.users_name} {item.id}
-            </div>
+            <div className="col-8 text-lg text-bold">{item.users_name}</div>
             <div
               className={
                 "col-4 text-md text-mute text-right d-table " +

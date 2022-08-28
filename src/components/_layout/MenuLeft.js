@@ -17,7 +17,7 @@ export default function MenuLeft() {
           <span className="brand-text font-weight-light">Gusgus</span>
         </a>
         <div className="sidebar">
-          <div className="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div className="user-panel pt-3 pb-3 mb-3 d-flex">
             <div className="image">
               <img
                 data-cfsrc="dist/img/user2-160x160.jpg"
@@ -28,7 +28,7 @@ export default function MenuLeft() {
             </div>
             <div className="info">
               <a href="/#" className="d-block">
-                User: Administator
+                Alexander Pierce
               </a>
             </div>
           </div>
@@ -60,7 +60,7 @@ export default function MenuLeft() {
                   className="nav-link"
                   activeClassName="active"
                 >
-                  <i className="far fa-circle nav-icon" />
+                  <i className="fa fa-truck nav-icon" />
                   <p>จัดส่ง</p>
                 </NavLink>
               </li>
@@ -70,7 +70,7 @@ export default function MenuLeft() {
                   className="nav-link"
                   activeClassName="active"
                 >
-                  <i className="far fa-circle nav-icon" />
+                  <i className="fa fa-shopping-bag nav-icon" />
                   <p>รายการจัดส่ง</p>
                 </NavLink>
               </li>
@@ -80,7 +80,7 @@ export default function MenuLeft() {
                   className="nav-link"
                   activeClassName="active"
                 >
-                  <i className="far fa-circle nav-icon" />
+                  <i className="fa fa-address-book nav-icon" />
                   <p>รายชื่อลูกค้า</p>
                 </NavLink>
               </li>
@@ -90,7 +90,7 @@ export default function MenuLeft() {
                   className="nav-link"
                   activeClassName="active"
                 >
-                  <i className="far fa-circle nav-icon" />
+                  <i className="fa fa-fan nav-icon" />
                   <p>รายชื่อสินค้า</p>
                 </NavLink>
               </li>
@@ -100,7 +100,7 @@ export default function MenuLeft() {
                   className="nav-link"
                   activeClassName="active"
                 >
-                  <i className="far fa-circle nav-icon" />
+                  <i className="fa fa-layer-group nav-icon" />
                   <p>ภาพรวม</p>
                 </NavLink>
               </li>
