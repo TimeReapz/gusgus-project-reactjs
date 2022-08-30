@@ -6,7 +6,6 @@ import {
   Redirect,
 } from "react-router-dom";
 import { AuthProvider } from "./components/pages/authentication/Auth";
-import Header from "./components/_layout/Header";
 import Footer from "./components/_layout/Footer";
 import MenuTop from "./components/_layout/MenuTop";
 import MenuLeft from "./components/_layout/MenuLeft";
@@ -76,7 +75,6 @@ export default function App() {
   return (
     <AuthProvider>
       <Router>
-        <Header />
         <MenuTop />
         <MenuLeft />
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
 import { db } from "../../../utils/firebase";
-
 import MyUploadImage from "../../genaral/MyUploadImage-v1";
 
 export default function Create(props) {

@@ -2,24 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
-import { db } from "../../../utils/firebase";
 import Select from "react-select";
-
-const schedule = [
-  { value: "ทุกพระ 8,15", label: "ทุกพระ 8,15" },
-  { value: "ทุกพระ 8", label: "ทุกพระ 8" },
-  { value: "ทุกพระ 15", label: "ทุกพระ 15" },
-  { value: "วันโกน", label: "วันโกน" },
-  { value: "วันพฤหัส", label: "วันพฤหัส" },
-  { value: "วันเสาร์", label: "วันเสาร์" },
-  { value: "วันอาทิตย์", label: "วันอาทิตย์" },
-  { value: "วันหวยออก", label: "วันหวยออก" },
-];
-
-const delivery = [
-  { value: "ไปส่งที่บ้าน", label: "ไปส่งที่บ้าน" },
-  { value: "มาเอาที่ตลาด", label: "มาเอาที่ตลาด" },
-];
+import { db } from "../../../utils/firebase";
+import { constScheduleChoice, constDelivery } from "../../../lib/Constant";
 
 export default function Create(props) {
   const history = useHistory();
@@ -261,7 +246,7 @@ export default function Create(props) {
                       <div className="form-group">
                         <label htmlFor="schedule">วันที่จัดส่ง</label>
                         <Select
-                          options={schedule}
+                          options={constScheduleChoice}
                           id="schedule"
                           onChange={(e) => {
                             setOrderSchedule({
@@ -270,7 +255,7 @@ export default function Create(props) {
                             });
                           }}
                           isSearchable={false}
-                          value={schedule.filter(
+                          value={constScheduleChoice.filter(
                             (options) =>
                               options.value === orderSchedule.schedule
                           )}
@@ -279,7 +264,7 @@ export default function Create(props) {
                       <div className="form-group">
                         <label htmlFor="delivery">วิธีการจัดส่ง</label>
                         <Select
-                          options={delivery}
+                          options={constDelivery}
                           id="delivery"
                           onChange={(e) => {
                             setOrderSchedule({
@@ -288,7 +273,7 @@ export default function Create(props) {
                             });
                           }}
                           isSearchable={false}
-                          value={delivery.filter(
+                          value={constDelivery.filter(
                             (options) =>
                               options.value === orderSchedule.delivery
                           )}

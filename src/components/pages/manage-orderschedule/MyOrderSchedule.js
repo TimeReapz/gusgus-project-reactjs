@@ -1,25 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../../utils/firebase";
 import { SwalConfirm, SwalToast } from "../../../lib/script";
+import { constScheduleMenu, constDelivery } from "../../../lib/Constant";
 import moment from "moment";
 import Select from "react-select";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-
-const schedule = [
-  { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
-  { value: "ทุกพระ 15|ทุกพระ 8,15", label: "ทุกพระ 15" },
-  { value: "วันโกน", label: "วันโกน" },
-  { value: "วันพฤหัส", label: "วันพฤหัส" },
-  { value: "วันเสาร์", label: "วันเสาร์" },
-  { value: "วันอาทิตย์", label: "วันอาทิตย์" },
-  { value: "วันหวยออก", label: "วันหวยออก" },
-];
-
-const delivery = [
-  { value: "ไปส่งที่บ้าน", label: "ไปส่งที่บ้าน" },
-  { value: "มาเอาที่ตลาด", label: "มาเอาที่ตลาด" },
-];
 
 export default function MyOrderSchedule() {
   const [dataTable, setDataTable] = useState([]);
@@ -98,26 +84,26 @@ export default function MyOrderSchedule() {
           <div className="row">
             <div className="col-12">
               <Select
-                options={schedule}
+                options={constScheduleMenu}
                 id="schedule"
                 onChange={(e) => {
                   setDataSchedule(e.value);
                 }}
                 isSearchable={false}
-                value={schedule.filter(
+                value={constScheduleMenu.filter(
                   (options) => options.value === dataSchedule
                 )}
               />
             </div>
             <div className="col-12 mt-1">
               <Select
-                options={delivery}
+                options={constDelivery}
                 id="delivery"
                 onChange={(e) => {
                   setDataDelivery(e.value);
                 }}
                 isSearchable={false}
-                value={delivery.filter(
+                value={constDelivery.filter(
                   (options) => options.value === dataDelivery
                 )}
               />

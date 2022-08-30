@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../../utils/firebase";
 import Select from "react-select";
 import Zoom from "react-medium-image-zoom";
+import { db } from "../../../utils/firebase";
+import { constScheduleMenu } from "../../../lib/Constant";
 import "react-medium-image-zoom/dist/styles.css";
-
-const schedule = [
-  { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
-  { value: "ทุกพระ 15|ทุกพระ 8,15", label: "ทุกพระ 15" },
-  { value: "วันโกน", label: "วันโกน" },
-  { value: "วันพฤหัส", label: "วันพฤหัส" },
-  { value: "วันเสาร์", label: "วันเสาร์" },
-  { value: "วันอาทิตย์", label: "วันอาทิตย์" },
-  { value: "วันหวยออก", label: "วันหวยออก" },
-];
 
 const DashBoard = () => {
   const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8|ทุกพระ 8,15");
@@ -67,13 +58,13 @@ const DashBoard = () => {
           <div className="row">
             <div className="col-12">
               <Select
-                options={schedule}
+                options={constScheduleMenu}
                 id="schedule"
                 onChange={(e) => {
                   setDataSchedule(e.value);
                 }}
                 isSearchable={false}
-                value={schedule.filter(
+                value={constScheduleMenu.filter(
                   (options) => options.value === dataSchedule
                 )}
               />

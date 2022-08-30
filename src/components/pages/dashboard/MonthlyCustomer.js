@@ -1,20 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../../utils/firebase";
-import Select from "react-select";
-import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-
-const schedule = [
-  { value: "ทุกพระ 8|ทุกพระ 8,15", label: "ทุกพระ 8" },
-  { value: "ทุกพระ 15|ทุกพระ 8,15", label: "ทุกพระ 15" },
-  { value: "วันโกน", label: "วันโกน" },
-  { value: "วันพฤหัส", label: "วันพฤหัส" },
-  { value: "วันเสาร์", label: "วันเสาร์" },
-  { value: "วันอาทิตย์", label: "วันอาทิตย์" },
-  { value: "วันหวยออก", label: "วันหวยออก" },
-];
 
 const DashBoard = () => {
   const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8|ทุกพระ 8,15");
