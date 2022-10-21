@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../../utils/firebase";
 import { SwalConfirm, SwalToast } from "../../../lib/script";
 import { constScheduleMenu, constDelivery } from "../../../lib/Constant";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import moment from "moment";
 import Select from "react-select";
 import Zoom from "react-medium-image-zoom";
@@ -11,7 +12,7 @@ export default function MyOrderSchedule() {
   const [dataTable, setDataTable] = useState([]);
   const [dataSchedule, setDataSchedule] = useState("ทุกพระ 8|ทุกพระ 8,15");
   const [dataDelivery, setDataDelivery] = useState("ไปส่งที่บ้าน");
-  const [search, setSearch] = React.useState("");
+  const [search, setSearch] = useState("");
 
   const tbOrderSchedules = db.collection("tbOrderSchedules");
 
@@ -203,7 +204,7 @@ function OrderScheduleBox({ item, onDeliverClick }) {
                   <span className="info-box-icon">
                     <Zoom>
                       <div className="text-center position-relative thumbnail-product">
-                        <img
+                        <LazyLoadImage
                           src={
                             orderScheduleItem.products_thumbnail !== ""
                               ? orderScheduleItem.products_thumbnail
